@@ -1,0 +1,39 @@
+body{
+    color: rgb(0, 0, 0);
+}
+/* .card{
+    background-color: aquamarine;
+    color: rgb(113, 104, 93);
+    /* display: flex;
+    align-items: center;  
+} */
+
+.bosx1{
+    background-color: black;
+    border-radius:2%;
+    margin:1rem;
+}
+.d-flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Styling for the cards */
+.card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+}
+
+.spinner-grow{
+    margin-top: 50dvh;
+    margin-left: 100dvh;
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    height: 10vh;
+    width: 10vh;
+} 

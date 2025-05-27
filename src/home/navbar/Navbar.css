@@ -1,0 +1,19 @@
+.navbar{
+    background-color: rgba(43,44,51,255);
+}
+
+#logo_img{
+  height: 4rem;
+  margin-right: 1rem;
+}
+
+.navbar-brands{
+    color: aliceblue;
+    font-family: "Anton", serif;
+    font-weight: 50;
+    font-style: normal;
+    text-decoration: none;
+    font-size:larger;
+}
+
+
