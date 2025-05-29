@@ -1,14 +1,17 @@
 html{
   background-color: rgba(29,30,36,500);
+  color:black;
 }
-.search-bar-container {
+
+
+/* .search-bar-container {
     position:fixed;
     width: 300px;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-}
+} */
 
 .search-bar-input {
     width: 100%;
@@ -19,15 +22,15 @@ html{
 }
 
 .suggestions-list {
-    position: absolute;
-    top: 100%;
+    /* position: absolute; */
+    /* top: 100%;
     left: 0;
-    right: 0;
+    right: 0; */
     background-color: white;
     border: 1px solid #ccc;
     list-style: none;
-    padding: 0;
-    margin: 0;
+    /* padding: 0;
+    margin: 0; */
     z-index: 1000;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);

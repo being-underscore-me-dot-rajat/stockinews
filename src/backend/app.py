@@ -5,11 +5,13 @@ import datetime
 import bcrypt
 from functools import wraps
 import os
-from Details import get_news,analyze_sentiment_bert
 import ticker_data
 from companies import Symbols
 from auth import login_user,signup
 import get
+import add
+import delete
+import portfolios
 from dotenv import load_dotenv
 load_dotenv()
 JWT_SECRET = os.getenv("JWT_SECRET")
@@ -25,6 +27,8 @@ def get_symb():
 
 @app.route('/api/details', methods=['GET'])
 def get_company_details():
+    from Details import get_news
+    from Details import analyze_sentiment_bert
     company = request.args.get('company')
     company = company.split(': ')[1]
     print(f"Fetching details for: {company}")
@@ -90,6 +94,71 @@ def getuser(decoded_token):
     if not user:
         return jsonify({"error": "User not found"}), 404
     return jsonify({"user": user})
+
+@app.route('/portfolio', methods=['GET'])
+@token_required
+def portfolio(decoded_token):
+    return get.get_portfolio(decoded_token)
+
+@app.route('/marketwatch', methods=['GET'])
+@token_required
+def market_watch(decoded_token):
+    overview = get.get_market_overview()
+    # print('market overview sent to the frontend')
+    return jsonify({"market": overview})
+
+@app.route("/watchlist", methods=["GET"])
+@token_required
+def get_watchlist(decoded_token):
+    user_id=decoded_token['user_id']
+    # print(get.get_watchlist_data(user_id))
+    return get.get_watchlist_data(user_id)
+
+@app.route("/watchlist", methods=["POST"])
+@token_required
+def add_watchlist(decoded_token):
+    user_id=decoded_token['user_id']
+    return add.add_watchlist(user_id)
+
+@app.route("/watchlist/<symbol>", methods=["DELETE"])
+@token_required
+def delete_watchlist(decoded_token, symbol):
+    user_id=decoded_token['user_id']
+    return delete.delete_watchlist(user_id,symbol)
+
+@app.route("/news", methods=["GET"])
+def get_news():
+    try:
+        news = get.getnewsdata()
+        return jsonify({"news": news})
+    except Exception as e:
+        print("Error fetching news:", e)
+        return jsonify({"news": [], "error": "Could not fetch news"}), 500
+    
+@app.route("/api/portfolio", methods=["GET"])
+@token_required
+def fetch_portfolio(decoded_token):
+    return portfolios.get_portfolio(decoded_token)
+
+@app.route("/api/portfolio/add", methods=["POST"])
+@token_required
+def add_stock(decoded_token):
+    return portfolios.add_stock(decoded_token)
+
+@app.route("/api/portfolio/sell", methods=["POST"])
+@token_required
+def sell_stock(decoded_token):
+    return portfolios.sell_stock(decoded_token)
+
+@app.route('/api/portfolio/history', methods=['GET'])
+@token_required
+def download_portfolio_history(decoded_token):
+    return portfolios.download_portfolio_history(decoded_token)
+
+@app.route('/api/portfolio/histories', methods=['GET'])
+@token_required
+def portfolio_history(decoded_token):
+    return portfolios.portfolio_history(decoded_token)
 
 if __name__ == '__main__':
     app.run(debug=True)

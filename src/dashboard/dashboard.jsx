@@ -4,6 +4,7 @@ import Portfolio from './components/portfolio/portfolio';
 import Marketwatch from './components/marketwatch/Marketwatch';
 import Watchlist from './components/watchlist/watchlist';
 import News from './components/news/news';
+import Navbar from '../home/navbar/Navbar';
 
 const containerStyle = {
   display: "grid",
@@ -46,7 +47,7 @@ export default function Dashboard() {
         } else {
           setMsg("Unauthorized");
           localStorage.removeItem("token");
-          navigate("/");
+          navigate("/", { replace: true });
         }
       } catch (err) {
         console.error(err);
@@ -58,16 +59,20 @@ export default function Dashboard() {
     fetchUser();
   }, [navigate]);
 
-  if (msg) {
-    return <div className="dashboard-msg">{msg}</div>;
-  }
+  if (msg === "Loading...") {
+  return <div style={{ textAlign: "center", marginTop: "100px" }}>Loading Dashboard...</div>;
+}
+
 
   return (
+    <>
+    <Navbar/>
     <div style={containerStyle}>
       <Portfolio user={user} />
       <Marketwatch/>
       <Watchlist />
       <News />
     </div>
+    </>
   );
 }

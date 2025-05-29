@@ -16,8 +16,8 @@ def get_connection():
 
 def login_user(email, password):
     conn = get_connection()
-    if conn:
-        print("connection established")
+    # if conn:
+    #     print("connection established")
     cursor = conn.cursor()
     cursor.execute("SELECT id, name, email, password FROM users WHERE email = ?", (email,))
     user = cursor.fetchone()
