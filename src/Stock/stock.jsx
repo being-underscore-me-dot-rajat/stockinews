@@ -8,7 +8,6 @@ import SentimentGauge from '../Sentiment/SenitmentGauge';
 import { Chart } from 'chart.js/auto';
 
 
-
 function Stock() {
     const [searchParams] = useSearchParams();
     const company = searchParams.get('company');
@@ -18,6 +17,7 @@ function Stock() {
     const [selectedDescription, setSelectedDescription] = useState('');
     const [isBannerOpen, setIsBannerOpen] = useState(false);
     const [timeRange, setTimeRange] = useState('7d');  // default to 7D
+    const [chartLoading, setChartLoading] = useState(true);
 
 
     const chartRef = useRef(null);
@@ -31,7 +31,7 @@ function Stock() {
         return calculateMean(scores);
     }, [newsData]);
 
-        useEffect(() => {
+    useEffect(() => {
         if (!company) return;
         setLoading(true);
         fetch(`http://127.0.0.1:5000/api/details?company=${company}`)
@@ -46,20 +46,22 @@ function Stock() {
             });
     }, [company]);
     useEffect(() => {
-    if (!company || !timeRange) return;
+        if (!company || !timeRange) return;
+        setChartLoading(true);
+        // Extract ticker for API call
+        const ticker = company.split(':')[0].trim();
 
-    // Extract ticker for API call
-    const ticker = company.split(':')[0].trim();
-
-    fetch(`http://127.0.0.1:5000/api/chart?ticker=${ticker}&period=${timeRange}`)
-        .then(response => response.json())
-        .then(data => {
-            setChartData(data);
-        })
-        .catch(error => {
-            console.error('Error fetching chart data:', error);
-        });
-}, [company, timeRange]);
+        fetch(`http://127.0.0.1:5000/api/chart?ticker=${ticker}&period=${timeRange}`)
+            .then(response => response.json())
+            .then(data => {
+                setChartData(data);
+                setChartLoading(false);
+            })
+            .catch(error => {
+                console.error('Error fetching chart data:', error);
+                setChartLoading(false);
+            });
+    }, [company, timeRange]);
 
 
     // Render chart when chartData updates
@@ -74,12 +76,8 @@ function Stock() {
         }
 
         const labels = chartData.map(point => {
-            const date = new Date(point.Datetime);
-            const day = date.getDate();
-            const month = date.toLocaleString('default', { month: 'short' });
-            const year = date.getFullYear();
-            const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            return `${day}, ${month}, ${year} ${time}`;
+            const [day, month, year] = point.Datetime.split('-'); // "01,06,25" → [ "01", "06", "25" ]
+            return `${day}- ${month}- 20${year}`; // Or just return point.Datetime directly if you're happy with the format
         });
 
         const prices = chartData.map(point => point.Close);
@@ -111,60 +109,67 @@ function Stock() {
         });
     }, [chartData]);
 
-        // UI rendering
-        if (loading) {
-            return <div className="spinner-grow text-danger" role="status"></div>;
-        }
-
+    // UI rendering
+    if (chartLoading) {
         return (
-            <div>
-                <Navbar />
-                <div className="container mt-5">
-                    <div className="d-flex flex-row flex-nowrap justify-content-center">
-                        {newsData.map((article, index) => (
-                            <div key={index} className='card me-3'>
-                                <div className='card-body'>
-                                    <a href={article.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{article.title}</a>
-                                    <br />
-                                    <a href="#" onClick={() => setIsBannerOpen(true) || setSelectedDescription(article.description)} className='card-text'>
-                                        Show Description
-                                    </a>
-                                    <p>Sentiment = {article.sentiment}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Loading...</span>
                 </div>
-                <div className="container mt-5">
-                    <h4>Stock Price Chart</h4>
-
-                    {/* Time Range Buttons */}
-                    <div className="mb-3">
-                        <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('7d')}>7 Days</button>
-                        <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('1mo')}>1 Month</button>
-                        <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('6mo')}>6 Months</button>
-                        <button className="btn btn-outline-primary" onClick={() => setTimeRange('1y')}>1 Year</button>
-                        <button className="btn btn-outline-primary" onClick={() => setTimeRange('max')}>Max</button>
-                    </div>
-
-                    <canvas ref={chartRef} width="800" height="400"></canvas>
-                </div>
-
-
-                <SentimentGauge score={avgSentiment} />
-
-                {isBannerOpen && (
-                    <Banner
-                        description={selectedDescription}
-                        closeBanner={() => {
-                            setIsBannerOpen(false);
-                            setSelectedDescription('');
-                        }}
-                    />
-                )}
             </div>
         );
-
     }
-    export default Stock;
+
+
+    return (
+        <div>
+            <Navbar />
+            <div className="container mt-5">
+                <div className="d-flex flex-row flex-nowrap justify-content-center">
+                    {newsData.map((article, index) => (
+                        <div key={index} className='card me-3'>
+                            <div className='card-body'>
+                                <a href={article.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{article.title}</a>
+                                <br />
+                                <a href="#" onClick={() => setIsBannerOpen(true) || setSelectedDescription(article.description)} className='card-text'>
+                                    Show Description
+                                </a>
+                                <p>Sentiment = {article.sentiment}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+            </div>
+            <div className="container mt-5">
+                <h4>Stock Price Chart</h4>
+
+                {/* Time Range Buttons */}
+                <div className="mb-3">
+                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('7d')}>7 Days</button>
+                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('1mo')}>1 Month</button>
+                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('6mo')}>6 Months</button>
+                    <button className="btn btn-outline-primary" onClick={() => setTimeRange('1y')}>1 Year</button>
+                    <button className="btn btn-outline-primary" onClick={() => setTimeRange('max')}>Max</button>
+                </div>
+
+                <canvas ref={chartRef} width="800" height="400"></canvas>
+            </div>
+
+
+            <SentimentGauge score={avgSentiment} />
+
+            {isBannerOpen && (
+                <Banner
+                    description={selectedDescription}
+                    closeBanner={() => {
+                        setIsBannerOpen(false);
+                        setSelectedDescription('');
+                    }}
+                />
+            )}
+        </div>
+    );
+
+}
+export default Stock;

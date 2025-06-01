@@ -7,6 +7,7 @@ def get_connection():
 
 def add_watchlist(user_id):
     symbol = request.json.get("symbol", "").upper()
+    symbol=symbol.split()[0]
     symbol=symbol+'.NS'
     if not symbol:
         return jsonify({"error": "Symbol is required"}), 400

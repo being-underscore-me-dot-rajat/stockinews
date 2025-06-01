@@ -1,14 +1,137 @@
-/* Use classes, not IDs, for reusable styling */
-.panelStyle {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  overflow-y: auto;
+:root {
+  --bg-dark: #1E1E26;
+  --bg-panel: #2D2D37;
+  --bg-card: #353540;
+  --accent-green: #28C947;
+  --accent-blue: #05AFF2;
+  --text-light: #F5F5F5;
+  --text-muted: #999;
+  --radius: 1rem;
+  --transition: 0.3s ease;
+  --glow: 0 0 20px rgba(5, 175, 242, 0.3);
 }
 
-.sectionTitleStyle {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  color: #333;
+/* 📦 Panel */
+.panelStyle {
+  background: rgba(45, 45, 55, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--bg-card);
+  border-radius: var(--radius);
+  padding: 2rem;
+  color: var(--text-light);
+  box-shadow: var(--glow);
+  animation: fadeIn 0.7s ease-in-out forwards;
+}
+
+/* 🧾 Title */
+.panelStyle h2 {
+  color: var(--accent-blue);
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+  text-shadow: 0 0 8px rgba(5, 175, 242, 0.3);
+}
+
+/* ➕ Add Controls */
+.panelStyle button {
+  padding: 0.4rem 1rem;
+  background-color: var(--accent-blue);
+  border: none;
+  border-radius: var(--radius);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--transition), transform var(--transition);
+}
+
+.panelStyle button:hover {
+  background-color: #0792cc;
+  transform: scale(1.05);
+}
+
+.panelStyle input {
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--bg-card);
+  background-color: var(--bg-dark);
+  color: white;
+}
+
+/* 🗃️ Watchlist Cards */
+.panelStyle a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.panelStyle .watch-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid transparent;
+  transition: transform var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.panelStyle .watch-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 0 20px rgba(5, 175, 242, 0.2);
+  border-color: var(--accent-blue);
+}
+
+/* 🧾 Card Content */
+.watch-card h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--accent-green);
+}
+
+.watch-card p {
+  margin: 0.25rem 0;
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+.watch-card p strong {
+  color: var(--accent-blue);
+}
+
+.watch-card .negative {
+  color: #f87171;
+}
+
+.watch-card .positive {
+  color: var(--accent-green);
+}
+
+/* 🗑 Remove button */
+.watch-card button {
+  margin-top: 0.75rem;
+  background-color: transparent;
+  border: 1px solid var(--accent-blue);
+  color: var(--accent-blue);
+  padding: 0.3rem 0.7rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+.watch-card button:hover {
+  background-color: var(--accent-blue);
+  color: #1E1E26;
+}
+
+/* ✨ Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }

@@ -36,10 +36,12 @@ def login_user(email, password):
     payload = {
         "user_id": user_id,
         "email": email,
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(seconds=JWT_EXP_DELTA_SECONDS)
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=JWT_EXP_DELTA_SECONDS)
     }
 
     token = jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+    # if isinstance(token, bytes):
+    #     token = token.decode('utf-8')
 
     return {
         "message": "Login successful",

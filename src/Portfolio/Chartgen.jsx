@@ -23,13 +23,15 @@ ChartJS.register(
   PointElement,
   TimeScale
 );
+
+import './chartgen.css'
 import React, { useEffect, useState } from 'react';
 function Chartgen({portfolio}) {
 const [historyData, setHistoryData] = useState(null);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
-  fetch('http://localhost:5000/api/portfolio/histories', {
+  fetch('http://localhost:5000/api/portfolios/histories', {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -41,7 +43,6 @@ const [historyData, setHistoryData] = useState(null);
       if (data) {
         const dates = data.dates;
         const values = data.values;
-
         setHistoryData({
           labels: dates,
           datasets: [{
@@ -89,46 +90,48 @@ const barData = {
     }
   ]
 };
-return(<div className="charts-section">
-  <h3>📈 Visual Portfolio Insights</h3>
+return (
+  <div className="charts-section">
+    <h3>📈 Visual Portfolio Insights</h3>
 
-  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '30px', justifyContent: 'center', marginBottom: '40px' }}>
-    <div style={{ width: '300px' }}>
-      <h4>Holdings Distribution</h4>
-      <Pie data={pieData} />
+    <div className="charts-row">
+      <div className="chart-wrapper pie">
+        <h4>Holdings Distribution</h4>
+        <Pie data={pieData} />
+      </div>
+
+      <div className="chart-wrapper bar">
+        <h4>Profit / Loss</h4>
+        <Bar
+          data={barData}
+          options={{ responsive: true, plugins: { legend: { display: false } } }}
+        />
+      </div>
     </div>
 
-    <div style={{ width: '500px' }}>
-      <h4>Profit / Loss</h4>
-      <Bar data={barData} options={{ responsive: true, plugins: { legend: { display: false } } }} />
-    </div>
+    {historyData && (
+      <div className="chart-wrapper line">
+        <h4>Portfolio Value Over the Past Week</h4>
+        <Line
+          data={historyData}
+          options={{
+            responsive: true,
+            plugins: {
+              legend: { position: 'top' },
+              tooltip: { mode: 'index', intersect: false },
+            },
+            scales: {
+              x: {
+                title: { display: true, text: 'Date' },
+              },
+              y: {
+                title: { display: true, text: 'Value (₹)' },
+              },
+            },
+          }}
+        />
+      </div>
+    )}
   </div>
-{historyData && (
-  <div style={{ width: '800px', margin: '0 auto' }}>
-    <h4>Portfolio Value Over the Past Week</h4>
-    <Line
-      data={historyData}
-      options={{
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          tooltip: { mode: 'index', intersect: false }
-        },
-        scales: {
-          x: {
-            title: { display: true, text: 'Date' }
-          },
-          y: {
-            title: { display: true, text: 'Value (₹)' }
-          }
-        }
-      }}
-    />
-  </div>
-)}
-
-
-</div>
-)
-}
+);}
 export default Chartgen;

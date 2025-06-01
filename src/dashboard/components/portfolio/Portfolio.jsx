@@ -7,6 +7,7 @@ import {
   Legend
 } from "chart.js";
 import { useNavigate } from "react-router-dom";
+import './portfolio.css'; 
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -66,10 +67,19 @@ export default function Portfolio({ user }) {
 
   const navigate = useNavigate();
 
-  if (loading) return <div>Loading portfolio...</div>;
+  if (loading) {
+    return (
+        <div>
+            <div className="loading-spinner" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    );}
 
   return (
-    <div className="panelStyle" onClick={() => navigate("/portfolio")} style={{ cursor: "pointer" }}>
+    <div className='panelStyle' onClick={() => navigate("/portfolio")} style={{ cursor: "pointer" }}>
+  <div className="panel-content">
+    <div className="portfolio-text">
       <h2>Portfolio Overview</h2>
       <p><strong>Total Investment:</strong> ${totalInvestment.toFixed(2)}</p>
       <p><strong>Current Value:</strong> ${currentValue.toFixed(2)}</p>
@@ -77,9 +87,11 @@ export default function Portfolio({ user }) {
         <strong>Change:</strong> {percentChange.toFixed(2)}%
         {percentChange >= 0 ? " 🔼" : " 🔽"}
       </p>
-      <div style={{ width: "300px", margin: "auto", marginTop: "1rem" }}>
-        <Pie data={pieData} />
-      </div>
     </div>
+    <div className="chart-container">
+      <Pie data={pieData} />
+    </div>
+  </div>
+</div>
   );
 }

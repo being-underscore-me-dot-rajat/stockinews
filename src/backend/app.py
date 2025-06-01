@@ -27,17 +27,17 @@ def get_symb():
 
 @app.route('/api/details', methods=['GET'])
 def get_company_details():
-    from Details import get_news
-    from Details import analyze_sentiment_bert
+    import Details
+    print("Company details called for")
     company = request.args.get('company')
-    company = company.split(': ')[1]
+    print(company)
     print(f"Fetching details for: {company}")
 
-    news_articles = get_news(company)
+    news_articles = Details.get_news(company)
     analyzed_data = []
 
     for article in news_articles:
-        sentiment = analyze_sentiment_bert(article['description'])
+        sentiment = Details.analyze_sentiment_bert(article['description'])
         article['sentiment_score'] = sentiment['polarity']
         article['sentiment']=sentiment['label']
         analyzed_data.append(article)
@@ -46,11 +46,11 @@ def get_company_details():
 
 @app.route('/api/chart')
 def genchart():
-    ticker = request.args.get('ticker').split(":")[0]+'.NS'
+    ticker = request.args.get('ticker').split(":")[0]
     period=request.args.get('period')
-    print("Ticker and Period",ticker,period)
+    # print("Ticker and Period",ticker,period)
     data = ticker_data.getdata(ticker,period)
-    print(data)
+    # print(data)
     return jsonify(data)
 
 @app.route('/login', methods=['POST'])
@@ -79,7 +79,11 @@ def token_required(f):
         if not token:
             return jsonify({"error": "Token is missing"}), 401
         try:
+            # decoded = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+            # print("Raw token received:", token)  # LOGGING
             decoded = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+            # print("Decoded JWT:", decoded)  # LOGGING
+            # request.user = decoded
         except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token expired"}), 401
         except jwt.InvalidTokenError:
@@ -135,27 +139,28 @@ def get_news():
         print("Error fetching news:", e)
         return jsonify({"news": [], "error": "Could not fetch news"}), 500
     
-@app.route("/api/portfolio", methods=["GET"])
+@app.route("/api/portfolios", methods=["GET"])
 @token_required
 def fetch_portfolio(decoded_token):
     return portfolios.get_portfolio(decoded_token)
 
-@app.route("/api/portfolio/add", methods=["POST"])
+@app.route("/api/portfolios/add", methods=["POST"])
 @token_required
 def add_stock(decoded_token):
     return portfolios.add_stock(decoded_token)
 
-@app.route("/api/portfolio/sell", methods=["POST"])
+@app.route("/api/portfolios/sell", methods=["POST"])
 @token_required
 def sell_stock(decoded_token):
     return portfolios.sell_stock(decoded_token)
 
-@app.route('/api/portfolio/history', methods=['GET'])
+@app.route('/api/portfolios/history', methods=['GET'])
 @token_required
 def download_portfolio_history(decoded_token):
+    
     return portfolios.download_portfolio_history(decoded_token)
 
-@app.route('/api/portfolio/histories', methods=['GET'])
+@app.route('/api/portfolios/histories', methods=['GET'])
 @token_required
 def portfolio_history(decoded_token):
     return portfolios.portfolio_history(decoded_token)

@@ -5,17 +5,7 @@ import Marketwatch from './components/marketwatch/Marketwatch';
 import Watchlist from './components/watchlist/watchlist';
 import News from './components/news/news';
 import Navbar from '../home/navbar/Navbar';
-
-const containerStyle = {
-  display: "grid",
-  gridTemplateColumns: "1fr 1fr",
-  gridTemplateRows: "300px 400px",
-  gap: "20px",
-  padding: "20px",
-  height: "100vh",
-  backgroundColor: "#f5f7fa",
-  fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
-};
+import './dashboard.css';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -24,6 +14,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    console.log(token)
 
     if (!token) {
       navigate("/"); // redirect if not logged in
@@ -67,10 +58,10 @@ export default function Dashboard() {
   return (
     <>
     <Navbar/>
-    <div style={containerStyle}>
+    <div>
       <Portfolio user={user} />
       <Marketwatch/>
-      <Watchlist />
+      <Watchlist/>
       <News />
     </div>
     </>

@@ -76,7 +76,7 @@ def add_stock(decoded_token):
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing fields"}), 400
 
-    ticker = data['ticker'].strip().upper()+".NS"
+    ticker = data['ticker'].split()[0]+".NS"
     quantity = int(data['quantity'])
     price = float(data['price'])
     action = data['action'].strip().upper()
@@ -204,41 +204,47 @@ def portfolio_history(decoded_token):
     cursor = conn.cursor()
 
     # Get user holdings (ticker and quantity)
-    cursor.execute("SELECT ticker, quantity FROM stocks WHERE user_id = ?", (user_id,))
-    holdings = cursor.fetchall()
+    cursor.execute("SELECT ticker, quantity, action FROM stocks WHERE user_id = ? ORDER BY created_at ASC", (user_id,))
+    rows = cursor.fetchall()
     conn.close()
 
-    if not holdings:
-        return jsonify({'error': 'No stocks found in portfolio'}), 404
+    portfolio_df = None
 
-    start_date = datetime.now() - timedelta(days=9)
-    end_date = datetime.now()
+# Loop through each stock
+    for symbol, quantity, action in rows:
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period="6mo", interval="1wk")
+        data = data.reset_index()
+        data['Date'] = data['Date'].dt.strftime('%d-%m-%Y')
+        
+        # Calculate value of holdings for this stock
+        data[f'{symbol}_value'] = data['Close'] * quantity
+        
+        # Reduce to only date and value columns
+        stock_df = data[['Date', f'{symbol}_value']]
+        
+        # Merge into the main portfolio DataFrame
+        if portfolio_df is None:
+            portfolio_df = stock_df
+        else:
+            portfolio_df = pd.merge(portfolio_df, stock_df, on='Date', how='outer')
 
-    portfolio_values = {}
+# Fill any missing values with 0 and compute total portfolio value
+    portfolio_df = portfolio_df.fillna(0)
+    portfolio_df['Total_Portfolio_Value'] = portfolio_df.drop(columns='Date').sum(axis=1)
 
-    for ticker, qty in holdings:
-        try:
-            stock = yf.Ticker(ticker)
-            hist = stock.history(start=start_date, end=end_date)
+    # Final output with Date and Total Portfolio Value
+    final_df = portfolio_df[['Date', 'Total_Portfolio_Value']]
+    final_df['Date'] = pd.to_datetime(final_df['Date'], format='%d-%m-%Y')
 
-            if hist.empty:
-                print(f"No data for {ticker}")
-                continue
+    # Sort by date
+    final_df = final_df.sort_values('Date').reset_index(drop=True)
 
-            for date, row in hist.iterrows():
-                date_str = date.strftime('%Y-%m-%d')
-                value = row['Close'] * qty
-                portfolio_values[date_str] = portfolio_values.get(date_str, 0) + value
+    # (Optional) Convert back to string format
+    final_df['Date'] = final_df['Date'].dt.strftime('%d-%m-%Y')
 
-        except Exception as e:
-            print(f"Error fetching data for {ticker}: {e}")
-            continue
-
-    # Sort dates and prepare JSON-serializable output
-    sorted_dates = sorted(portfolio_values.keys())
-    values = [round(portfolio_values[date], 2) for date in sorted_dates]
-    print(sorted_dates,values)
     return {
-        "dates": sorted_dates,
-        "values": values
+    "dates": final_df['Date'].tolist(),
+    "values": final_df['Total_Portfolio_Value'].tolist()
     }
+

@@ -1,39 +1,117 @@
-body{
-    color: rgb(0, 0, 0);
-}
-/* .card{
-    background-color: aquamarine;
-    color: rgb(113, 104, 93);
-    /* display: flex;
-    align-items: center;  
-} */
-
-.bosx1{
-    background-color: black;
-    border-radius:2%;
-    margin:1rem;
-}
-.d-flex {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
+body {
+  background-color: #1E1E26;
+  color: #ffffff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Styling for the cards */
+.container {
+  background-color: #2D2D37;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 0 20px rgba(5, 175, 242, 0.1);
+  animation: fadeIn 0.8s ease-in-out;
+}
+
 .card {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    border-radius: 10px;
-    padding: 15px;
-    text-align: center;
+  background-color: #353540;
+  color: #ffffff;
+  border: none;
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 300px;
 }
 
-.spinner-grow{
-    margin-top: 50dvh;
-    margin-left: 100dvh;
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
-    height: 10vh;
-    width: 10vh;
-} 
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(40, 201, 71, 0.3);
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card a.btn-primary {
+  background-color: #05AFF2;
+  border: none;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.card a.btn-primary:hover {
+  background-color: #0286c2;
+}
+
+.card a.card-text {
+  color: #28C947;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.card a.card-text:hover {
+  color: #05AFF2;
+}
+
+h4 {
+  color: #05AFF2;
+  margin-bottom: 1.2rem;
+  text-align: center;
+}
+
+.btn-outline-primary {
+  color: #05AFF2;
+  border-color: #05AFF2;
+  background-color: transparent;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+  background-color: #05AFF2;
+  color: #1E1E26;
+}
+
+canvas {
+  background-color: #1E1E26;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(5, 175, 242, 0.15);
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+canvas:hover {
+  transform: scale(1.01);
+}
+
+/* Spinner Centering */
+.d-flex.justify-content-center.align-items-center {
+  background-color: #1E1E26;
+}
+
+/* Spinner override */
+.spinner-border.text-primary {
+  color: #05AFF2;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive: stack cards on small screens */
+@media (max-width: 768px) {
+  .d-flex.flex-row.flex-nowrap {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+    width: 90%;
+  }
+
+  canvas {
+    width: 100% !important;
+  }
+}

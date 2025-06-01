@@ -1,14 +1,139 @@
-/* Use classes, not IDs, for reusable styling */
-.panelStyle {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  overflow-y: auto;
+:root {
+  --bg-dark: #1E1E26;
+  --bg-panel: #2D2D37;
+  --bg-glass: rgba(45, 45, 55, 0.6);
+  --border: #353540;
+  --accent-green: #28C947;
+  --accent-blue: #05AFF2;
+  --text-light: #f5f5f5;
+  --text-muted: #888;
+  --shadow: rgba(5, 175, 242, 0.25);
+  --radius: 1.25rem;
 }
 
-.sectionTitleStyle {
-  font-size: 1.3rem;
-  margin-bottom: 10px;
-  color: #333;
+/* 💫 Panel with glassy, animated drama */
+.panelStyle {
+  background: var(--bg-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  color: var(--text-light);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  animation: floatUp 0.7s ease forwards;
+  box-shadow: 0 0 40px var(--shadow);
+}
+
+.panelStyle::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(5, 175, 242, 0.1), transparent 70%);
+  animation: spinPulse 8s linear infinite;
+  z-index: 0;
+}
+
+.panelStyle:hover {
+  box-shadow: 0 0 50px var(--accent-blue);
+  transform: translateY(-4px) scale(1.01);
+}
+
+.panelStyle > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* 🔢 Typography */
+.panelStyle h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: var(--accent-blue);
+  text-shadow: 0 0 6px rgba(5, 175, 242, 0.3);
+}
+
+.panelStyle p {
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  color: var(--text-light);
+}
+
+.panel-content {
+  display: flex;
+  /* align-items: center; */
+  /* justify-content: space-between; Spread them apart */
+  /* gap: 2rem;                Space between text and chart */
+  flex-wrap: wrap;          /* Wrap on smaller screens */
+}
+
+.panelStyle p strong {
+  color: var(--accent-green);
+}
+
+.portfolio-text {
+  flex: 1 1 300px;          /* Text takes up available space, min 300px */
+}
+
+/* 📊 Chart */
+.chart-container {
+  width: 700px;
+  height: 300px;
+  max-width: 100%;
+  margin: 1.5rem auto 0 auto;
+  transition: transform 0.3s ease;
+}
+
+.chart-container:hover {
+  transform: scale(1.05);
+}
+
+/* 🔄 Loading spinner (custom-built, no bootstrap) */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.spinner {
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top: 6px solid var(--accent-blue);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1.2s linear infinite;
+}
+
+/* ✨ Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px) scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spinPulse {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  100% {
+    transform: rotate(360deg) scale(1.1);
+    opacity: 0.3;
+  }
 }

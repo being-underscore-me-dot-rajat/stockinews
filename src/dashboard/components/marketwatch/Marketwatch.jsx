@@ -12,7 +12,7 @@ export default function MarketWatch() {
   const [sortKey, setSortKey] = useState("name");
   const [sortAsc, setSortAsc] = useState(true);
   const [filterType, setFilterType] = useState("all");
-
+  const [Loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -26,14 +26,25 @@ export default function MarketWatch() {
         const result = await res.json();
         if (res.ok) {
           setData(result.market);
+          setLoading(false);
         }
       } catch (err) {
         console.error("Market data error:", err);
+        setLoading(false);
       }
     };
 
     fetchMarket();
   }, []);
+
+  if (Loading) {
+    return (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    );}
 
   const getGroup = (symbol) => {
     if (MARKET_GROUPS.index.includes(symbol)) return "Index";
@@ -88,18 +99,14 @@ export default function MarketWatch() {
       {/* Market Data Grid */}
       <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}>
         {filtered.map((item, idx) => (
-          <div key={idx} style={{
-            border: "1px solid #ddd",
-            borderRadius: "1rem",
-            padding: "1rem",
-            background: "#fafafa"
-          }}>
+          <div key={idx} className="market-card">
+
             <h4>{item.name || item.symbol}</h4>
             <p><strong>Symbol:</strong> {item.symbol}</p>
             <p><strong>Price:</strong> ${item.price?.toFixed(2) ?? "N/A"}</p>
             <p>
               <strong>Change:</strong>{" "}
-              <span style={{ color: item.percent_change >= 0 ? "green" : "red" }}>
+              <span className={item.percent_change >= 0 ? "positive" : "negative"}>
                 {item.percent_change?.toFixed(2) ?? "0.00"}%
               </span>
             </p>

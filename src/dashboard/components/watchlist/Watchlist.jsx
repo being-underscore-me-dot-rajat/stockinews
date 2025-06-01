@@ -1,10 +1,22 @@
-import './watchlist.css'
+import './watchlist.css';
 import React, { useState, useEffect } from "react";
+import Dropdown from '../../../home/dropdown/Dropdown'; 
+import { Link } from 'react-router-dom';
 
 export default function Watchlist() {
   const [watchlist, setWatchlist] = useState([]);
   const [newSymbol, setNewSymbol] = useState("");
-  const token = localStorage.getItem("token");
+  // const token = localStorage.getItem("token");
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [Loading,setloading]=useState(true);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    if (storedToken !== token) {
+      setToken(storedToken);
+    }
+  }, []);
+  const [resetTrigger, setResetTrigger] = useState(false);
 
   const fetchWatchlist = async () => {
     try {
@@ -12,9 +24,9 @@ export default function Watchlist() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
-      if (res.ok) setWatchlist(data);
+      if (res.ok) {setWatchlist(data);setloading(false);}
     } catch (err) {
-      console.error("Fetch watchlist error:", err);
+      console.error("Fetch watchlist error:", err);setloading(false);
     }
   };
 
@@ -31,6 +43,7 @@ export default function Watchlist() {
       });
       if (res.ok) {
         setNewSymbol("");
+        setResetTrigger(prev => !prev); // trigger reset
         fetchWatchlist();
       }
     } catch (err) {
@@ -54,26 +67,29 @@ export default function Watchlist() {
     fetchWatchlist();
   }, []);
 
+  const handleSymbolSelect = (symbol) => {
+    setNewSymbol(symbol);
+  };
+  if (Loading) {
+    return (
+        <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
+            <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    );}
+    
   return (
     <div className="panelStyle">
       <h2>Watchlist</h2>
-
-      {/* Add form */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
-        <input
-          type="text"
-          placeholder="Add symbol (e.g., TSLA)"
-          value={newSymbol}
-          onChange={(e) => setNewSymbol(e.target.value)}
-          style={{ flexGrow: 1, padding: "0.5rem" }}
-        />
+        <Dropdown onSelect={handleSymbolSelect} token={token} resetTrigger={resetTrigger} />
         <button onClick={addSymbol}>Add</button>
       </div>
-
-      {/* Watchlist Grid */}
       <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}>
-        {watchlist.map((item, idx) => (
-          <div key={idx} style={{ border: "1px solid #ccc", borderRadius: "1rem", padding: "1rem" }}>
+        {watchlist.map((item) => (
+          <Link to={`/company-page?company=${item.symbol}`}>
+          <div key={item.symbol} style={{ border: "1px solid #ccc", borderRadius: "1rem", padding: "1rem" }}>
             <h4>{item.name || item.symbol}</h4>
             <p><strong>Symbol:</strong> {item.symbol}</p>
             <p><strong>Price:</strong> ${item.price?.toFixed(2) ?? "N/A"}</p>
@@ -84,9 +100,9 @@ export default function Watchlist() {
               Remove
             </button>
           </div>
+          </Link>
         ))}
       </div>
     </div>
   );
 }
-

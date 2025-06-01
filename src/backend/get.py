@@ -127,10 +127,10 @@ def getnewsdata():
     load_dotenv()
     NEWS_API_KEY = os.getenv('NEWS_API_KEY')
     keyz='Indian Stocks Nifty'
-    url = f"https://newsapi.org/v2/everything?q={keyz}&apiKey={NEWS_API_KEY}"
+    url = f"https://newsapi.org/v2/everything?q={keyz}&sortBy=publishedAt&apiKey={NEWS_API_KEY}"
     response = requests.get(url)
     data = response.json()
-    print(data)
+    # print(data)
     if 'articles' not in data or len(data['articles']) == 0:
         return [{"title": "No News Available", "url": "", "description": "No news articles were found for this company."}]
     return [
