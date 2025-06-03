@@ -45,46 +45,56 @@ const Login = () => {
 
   return (
     <>
-    <div className="auth-wrapper">
-      <form onSubmit={handleAuth} className="auth-form">
-        <h2>{isLogin ? 'Login' : 'Sign Up'} to Stockinews</h2>
+      <div className="auth-page">
+        <div className="auth-left">
+          <img src="/images/logo.png" alt="Stockinews Logo" className="brand-logo" />
+          <h1 className="brand-title">Stockinews</h1>
+          <p className="brand-tagline">Smart Sentiments. Smarter Investments.</p>
+        </div>
 
-        {!isLogin && (
-          <input
-            type="text"
-            placeholder="Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-        )}
+        <div className="auth-right">
+          <form onSubmit={handleAuth} className="auth-form">
+            <h2>{isLogin ? 'Login' : 'Sign Up'} to Stockinews</h2>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+            {!isLogin && (
+              <input
+                type="text"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            )}
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+            <input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
 
-        <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
-        <p onClick={() => setIsLogin(!isLogin)} style={{ cursor: 'pointer', color: 'blue' }}>
-          {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
-        </p>
+            <input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
 
-        {msg && <p className="message">{msg}</p>}
-      </form>
-    
-    </div>
-    <Footer />
+            <button type="submit">{isLogin ? 'Login' : 'Sign Up'}</button>
+            <p
+              onClick={() => setIsLogin(!isLogin)}
+              style={{ cursor: 'pointer', color: 'var(--accent-blue)', marginTop: '1rem' }}
+            >
+              {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'}
+            </p>
+
+            {msg && <p className="message">{msg}</p>}
+          </form>
+        </div>
+      </div>
+      <Footer />
     </>
   );
 };

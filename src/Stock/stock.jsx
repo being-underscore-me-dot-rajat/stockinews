@@ -3,7 +3,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import './stock.css';
 import Navbar from '../home/navbar/Navbar';
-import Banner from '../banner/Banner';
+import Banner from './banner/Banner';
 import SentimentGauge from '../Sentiment/SenitmentGauge';
 import { Chart } from 'chart.js/auto';
 import Footer from '../home/navbar/footer/Footer';
