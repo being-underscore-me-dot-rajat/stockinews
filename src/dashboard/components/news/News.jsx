@@ -22,19 +22,22 @@ export default function News() {
 
   if (Loading) {
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
-            <div className="spinner-border text-primary" role="status">
+        <div>
+            <div className="spinner" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
         </div>
     );}
 
   return (
-    <>
+    <div className="panelStyle scrollPanel">
+      <div className="sectionTitleStyle"><h2>News</h2></div>
     {news.length === 0 ? (
   <p>No news available.</p>
 ) : (
-  news.map((article, idx) => (
+  <div className="scrollContent">
+  {news.map((article, idx) => (
+    
     <article key={idx}>
       <h3>
         <a href={article.url} target="_blank" rel="noopener noreferrer">
@@ -55,7 +58,8 @@ export default function News() {
       )}
       <p>{article.description}</p>
     </article>
-  ))
+    
+  ))}</div>
 )}
- </> );
+ </div> );
 }

@@ -41,7 +41,7 @@
 }
 
 .panelStyle:hover {
-  box-shadow: 0 0 50px var(--accent-blue);
+  box-shadow: 0 0 15px var(--accent-blue);
   transform: translateY(-4px) scale(1.01);
 }
 
@@ -82,8 +82,8 @@
 
 /* 📊 Chart */
 .chart-container {
-  width: 700px;
-  height: 300px;
+  width: 300px;
+  height: 200px;
   max-width: 100%;
   margin: 1.5rem auto 0 auto;
   transition: transform 0.3s ease;
@@ -110,7 +110,7 @@
   animation: spin 1.2s linear infinite;
 }
 
-/* ✨ Animations */
+✨ Animations
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }

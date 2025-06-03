@@ -6,6 +6,7 @@ import Navbar from '../home/navbar/Navbar';
 import Banner from '../banner/Banner';
 import SentimentGauge from '../Sentiment/SenitmentGauge';
 import { Chart } from 'chart.js/auto';
+import Footer from '../home/navbar/footer/Footer';
 
 
 function Stock() {
@@ -131,33 +132,47 @@ function Stock() {
                             <div className='card-body'>
                                 <a href={article.url} target="_blank" rel="noopener noreferrer" className="btn btn-primary">{article.title}</a>
                                 <br />
-                                <a href="#" onClick={() => setIsBannerOpen(true) || setSelectedDescription(article.description)} className='card-text'>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setSelectedDescription(article.description);
+                                        setIsBannerOpen(true);
+                                    }}
+                                    className="card-text"
+
+                                >
                                     Show Description
-                                </a>
-                                <p>Sentiment = {article.sentiment}</p>
+                                </button>
+
+                                <p>{article.sentiment} Sentiment News</p>
                             </div>
                         </div>
                     ))}
+
                 </div>
+                <SentimentGauge score={avgSentiment} />
 
             </div>
             <div className="container mt-5">
                 <h4>Stock Price Chart</h4>
 
                 {/* Time Range Buttons */}
-                <div className="mb-3">
-                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('7d')}>7 Days</button>
-                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('1mo')}>1 Month</button>
-                    <button className="btn btn-outline-primary me-2" onClick={() => setTimeRange('6mo')}>6 Months</button>
-                    <button className="btn btn-outline-primary" onClick={() => setTimeRange('1y')}>1 Year</button>
-                    <button className="btn btn-outline-primary" onClick={() => setTimeRange('max')}>Max</button>
+                <div className="mb-3" id="buttons">
+                    <div className="mb-3" id="buttons">
+                        <button className={`btn ${timeRange === '7d' ? 'active' : ''}`} onClick={() => setTimeRange('7d')}>7 Days</button>
+                        <button className={`btn ${timeRange === '1 month' ? 'active' : ''}`} onClick={() => setTimeRange('1mo')}>1 Month</button>
+                        <button className={`btn ${timeRange === '6 month' ? 'active' : ''}`} onClick={() => setTimeRange('6mo')}>6 Months</button>
+                        <button className={`btn ${timeRange === '1 year' ? 'active' : ''}`} onClick={() => setTimeRange('1y')}>1 Year</button>
+                        <button className={`btn ${timeRange === 'max' ? 'active' : ''}`} onClick={() => setTimeRange('max')}>Max</button>
+                    </div>
+
                 </div>
 
                 <canvas ref={chartRef} width="800" height="400"></canvas>
             </div>
 
 
-            <SentimentGauge score={avgSentiment} />
+
 
             {isBannerOpen && (
                 <Banner
@@ -168,6 +183,7 @@ function Stock() {
                     }}
                 />
             )}
+            <Footer />
         </div>
     );
 

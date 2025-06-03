@@ -1,8 +1,7 @@
 from flask import Flask, request, jsonify,send_file
 import sqlite3
 from io import BytesIO
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+
 
 
 DB_NAME = "src/backend/stockinews.db"
@@ -144,6 +143,12 @@ def sell_stock(decoded_token):
     return jsonify({"message": "Sell transaction recorded successfully."}), 200
 
 def download_portfolio_history(decoded_token):
+    from reportlab.lib.pagesizes import letter
+    from reportlab.pdfgen import canvas
+    from reportlab.lib import colors
+    from reportlab.lib.units import inch
+    from io import BytesIO
+    from reportlab.lib.utils import ImageReader
     user_id = decoded_token['user_id']
 
     conn = get_connection()
@@ -167,23 +172,59 @@ def download_portfolio_history(decoded_token):
     pdf_buffer = BytesIO()
     pdf = canvas.Canvas(pdf_buffer, pagesize=letter)
     width, height = letter
-    y = height - 40
+    y = height - 80
+    logo_path = "public/images/logo.png"  # Ensure this path is correct
+    try:
+        logo = ImageReader(logo_path)
+        pdf.drawImage(logo, 50, y, width=50, height=50, mask='auto')
+    except:
+        pass  # Fail silently if logo not found
 
-    pdf.setFont("Helvetica-Bold", 16)
-    pdf.drawString(50, y, f"Portfolio Transaction History (User ID: {user_id})")
-    y -= 30
+    # Brand Title
+    pdf.setFillColor(colors.HexColor("#05AFF2"))  # Cyber Sky
+    pdf.setFont("Helvetica-Bold", 22)
+    pdf.drawString(110, y + 15, "StockiNews")
 
-    pdf.setFont("Helvetica", 12)
+    y -= 40
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.setFillColor(colors.HexColor("#28C947"))  # Lush Lime
+    pdf.drawString(50, y, f"Portfolio Transaction History")
+    pdf.setFont("Helvetica", 11)
+    pdf.setFillColor(colors.HexColor("#f5f5f5"))  # Light text
+    pdf.drawString(350, y, f"User ID: {user_id}")
+    y -= 20
+
+    # Header line
+    pdf.setStrokeColor(colors.HexColor("#353540"))
+    pdf.setLineWidth(1)
+    pdf.line(50, y, width - 50, y)
+    y -= 20
+
+    # Body loop
+    pdf.setFont("Helvetica", 10)
     for row in rows:
         ticker, quantity, price, action, timestamp = row
-        line = f"{timestamp[:19]} | {action.upper()} {quantity} of {ticker} @ ₹{price}"
-        pdf.drawString(50, y, line)
-        y -= 20
+        action_color = "#28C947" if action.lower() == "buy" else "#f87171"
+        action_str = f"{action.upper()} {quantity} of {ticker} @ ₹{price}"
 
-        if y < 40:
+        # Timestamp
+        pdf.setFillColor(colors.HexColor("#888888"))
+        pdf.drawString(50, y, timestamp[:19])
+
+        # Action line
+        pdf.setFillColor(colors.HexColor(action_color))
+        pdf.drawString(180, y, action_str)
+
+        y -= 18
+
+        # Page break
+        if y < 60:
+            draw_footer(pdf, width)
             pdf.showPage()
-            y = height - 40
-            pdf.setFont("Helvetica", 12)
+            y = height - 80
+            pdf.setFont("Helvetica", 10)
+
+    draw_footer(pdf, width)
 
     pdf.save()
     pdf_buffer.seek(0)
@@ -194,6 +235,19 @@ def download_portfolio_history(decoded_token):
         download_name='portfolio_history.pdf',
         mimetype='application/pdf'
     )
+
+def draw_footer(pdf, width):
+    # Footer branding
+    from reportlab.lib import colors
+    pdf.setStrokeColor(colors.HexColor("#2D2D37"))
+    pdf.setLineWidth(0.5)
+    pdf.line(50, 40, width - 50, 40)
+
+    pdf.setFont("Helvetica-Oblique", 9)
+    pdf.setFillColor(colors.HexColor("#05AFF2"))
+    pdf.drawString(50, 25, "StockiNews - Powered by Insights, Driven by Data.")
+    pdf.setFillColor(colors.HexColor("#888888"))
+    pdf.drawRightString(width - 50, 25, "https://stockinews.com")
 
 def portfolio_history(decoded_token):
     from datetime import datetime, timedelta

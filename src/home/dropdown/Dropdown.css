@@ -4,6 +4,7 @@
   position: relative;
   width: 100%;
   max-width: 320px;
+  z-index: 9999; 
 }
 
 .search-bar-container {
@@ -35,7 +36,7 @@
   border-top: none;
   border-radius: 0 0 0.5rem 0.5rem;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 9999; /* <<⬅️⬅️ Ensure this is VERY high */
+  z-index: 9999; 
   margin: 0;
   padding: 0;
   list-style: none;
@@ -48,6 +49,7 @@
   font-size: 0.95rem;
   color: #333;
   transition: background-color 0.2s ease;
+  z-index: 9999; 
 }
 
 .suggestion-item:hover,

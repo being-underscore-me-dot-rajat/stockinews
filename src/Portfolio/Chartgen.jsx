@@ -111,7 +111,7 @@ return (
 
     {historyData && (
       <div className="chart-wrapper line">
-        <h4>Portfolio Value Over the Past Week</h4>
+        <h4>Portfolio Value Over the Past 6 months</h4>
         <Line
           data={historyData}
           options={{

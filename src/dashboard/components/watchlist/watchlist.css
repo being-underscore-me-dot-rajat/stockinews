@@ -24,6 +24,22 @@
   animation: fadeIn 0.7s ease-in-out forwards;
 }
 
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.spinner {
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top: 6px solid var(--accent-blue);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1.2s linear infinite;
+}
+
 /* 🧾 Title */
 .panelStyle h2 {
   color: var(--accent-blue);
@@ -63,16 +79,28 @@
   color: inherit;
 }
 
-.panelStyle .watch-card {
+.panelStyle{
   background-color: var(--bg-card);
   border-radius: var(--radius);
   padding: 1rem;
   border: 1px solid transparent;
   transition: transform var(--transition), box-shadow var(--transition);
   cursor: pointer;
-  position: relative;
+  /* position: relative; */
   overflow: hidden;
-  z-index: 1;
+  /* z-index: -1; */
+}
+
+.watch-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 1rem;
+  border: 1px solid transparent;
+  transition: transform var(--transition), box-shadow var(--transition);
+  cursor: pointer;
+  /* position: relative; */
+  overflow: hidden;
+  z-index: auto;
 }
 
 .panelStyle .watch-card:hover {
@@ -134,4 +162,24 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+.scrollPanel {
+  max-height: 70vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 1rem; /* space for scrollbar */
+}
+
+/* Optional: Smooth scrolling */
+.scrollPanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollPanel::-webkit-scrollbar-thumb {
+  background-color: rgba(14, 165, 233, 0.3);
+  border-radius: 4px;
+}
+
+.scrollPanel::-webkit-scrollbar-track {
+  background: transparent;
 }

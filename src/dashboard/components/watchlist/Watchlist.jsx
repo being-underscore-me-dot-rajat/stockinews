@@ -72,27 +72,27 @@ export default function Watchlist() {
   };
   if (Loading) {
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
-            <div className="spinner-border text-primary" role="status">
+        <div>
+            <div className="spinner" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
         </div>
     );}
     
   return (
-    <div className="panelStyle">
+    <div className="panelStyle scrollPanel">
       <h2>Watchlist</h2>
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}>
         <Dropdown onSelect={handleSymbolSelect} token={token} resetTrigger={resetTrigger} />
         <button onClick={addSymbol}>Add</button>
       </div>
-      <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}>
+      <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }} className='watch-card'>
         {watchlist.map((item) => (
           <Link to={`/company-page?company=${item.symbol}`}>
           <div key={item.symbol} style={{ border: "1px solid #ccc", borderRadius: "1rem", padding: "1rem" }}>
             <h4>{item.name || item.symbol}</h4>
             <p><strong>Symbol:</strong> {item.symbol}</p>
-            <p><strong>Price:</strong> ${item.price?.toFixed(2) ?? "N/A"}</p>
+            <p><strong>Price:</strong> ₹{item.price?.toFixed(2) ?? "N/A"}</p>
             <p style={{ color: item.percent_change >= 0 ? "green" : "red" }}>
               <strong>Change:</strong> {item.percent_change?.toFixed(2) ?? 0}%
             </p>

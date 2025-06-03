@@ -2,6 +2,7 @@ import '../App.css';
 import './Login.css'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../home/navbar/footer/Footer';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -43,6 +44,7 @@ const Login = () => {
   };
 
   return (
+    <>
     <div className="auth-wrapper">
       <form onSubmit={handleAuth} className="auth-form">
         <h2>{isLogin ? 'Login' : 'Sign Up'} to Stockinews</h2>
@@ -80,7 +82,10 @@ const Login = () => {
 
         {msg && <p className="message">{msg}</p>}
       </form>
+    
     </div>
+    <Footer />
+    </>
   );
 };
 

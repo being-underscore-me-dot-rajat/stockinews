@@ -12,7 +12,7 @@
 /* 📦 Base Panel */
 .panelStyle {
   background-color: var(--bg-panel);
-  padding: 2rem;
+  padding: 1rem;
   border-radius: var(--radius);
   color: var(--text-light);
   box-shadow: var(--border-glow);
@@ -20,7 +20,7 @@
 }
 
 /* 🧠 Section Header */
-.sectionTitleStyle {
+.sectionTitleStyle{
   font-size: 1.5rem;
   color: var(--accent-blue);
   margin-bottom: 1.5rem;
@@ -82,4 +82,40 @@ article p {
   margin-bottom: 0.5rem;
   margin-right: 0.5rem;
   font-style: italic;
+}
+
+.scrollPanel {
+  max-height: 70vh; /* Adjust as needed */
+  overflow-y: auto;
+  padding-right: 1rem; /* space for scrollbar */
+}
+
+/* Optional: Smooth scrolling */
+.scrollPanel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollPanel::-webkit-scrollbar-thumb {
+  background-color: rgba(14, 165, 233, 0.3);
+  border-radius: 4px;
+}
+
+.scrollPanel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.spinner {
+  border: 6px solid rgba(255, 255, 255, 0.1);
+  border-top: 6px solid var(--accent-blue);
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1.2s linear infinite;
 }

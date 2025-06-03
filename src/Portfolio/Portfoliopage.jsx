@@ -5,6 +5,7 @@ import Dropdown from '../home/dropdown/Dropdown';
 import Chartgen from './chartgen';
 import Navbar from '../home/navbar/Navbar'
 import {Link} from 'react-router-dom';
+import Footer from '../home/navbar/footer/Footer';
 
 function Portfoliopage() {
   const [portfolio, setPortfolio] = useState([]);
@@ -198,7 +199,7 @@ if (Loading) {
           <h3>Download Transaction History</h3>
           <button
             onClick={() => {
-              fetch('http://localhost:5000/api/portfolio/history', {
+              fetch('http://localhost:5000/api/portfolios/history', {
                 headers: {
                   Authorization: `Bearer ${token}`,
                 }
@@ -229,6 +230,7 @@ if (Loading) {
         <Chartgen portfolio={portfolio} />
 
       </div>
+      <Footer/>
     </>
   );
 

@@ -10,6 +10,13 @@ body {
   border-radius: 1.5rem;
   box-shadow: 0 0 20px rgba(5, 175, 242, 0.1);
   animation: fadeIn 0.8s ease-in-out;
+  z-index: 1;
+  /* optional */
+
+}
+
+.container h4 {
+  color: #ffffff;
 }
 
 .card {
@@ -19,6 +26,15 @@ body {
   border-radius: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 300px;
+  z-index: 1;
+  /* optional */
+  
+
+}
+
+#buttons {
+  display: flex;
+  justify-content: space-between;
 }
 
 .card:hover {
@@ -28,6 +44,11 @@ body {
 
 .card-body {
   padding: 1rem;
+  z-index: 1;
+  /* optional */
+  text-align: center;
+  
+  
 }
 
 .card a.btn-primary {
@@ -42,9 +63,9 @@ body {
 }
 
 .card a.card-text {
-  color: #28C947;
+  color: #c3c3c3;
   font-size: 0.9rem;
-  text-decoration: underline;
+  /* text-decoration: underline; */
   cursor: pointer;
 }
 
@@ -52,24 +73,71 @@ body {
   color: #05AFF2;
 }
 
+.card-text {
+  color: white;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+  /* display: inline-block; */
+  position: relative;
+  /* z-index: 1000; adjust as needed, but avoid 9999 unless necessary */
+  /* align-items: center; */
+  justify-content: center;
+  border-radius: 1rem;
+  /* margin: 5px; */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  
+}
+
+
 h4 {
   color: #05AFF2;
   margin-bottom: 1.2rem;
   text-align: center;
 }
 
-.btn-outline-primary {
-  color: #05AFF2;
-  border-color: #05AFF2;
-  background-color: transparent;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
+#buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.btn-outline-primary:hover {
+#buttons .btn {
+  color: #05AFF2;
+  border: 2px solid #05AFF2;
+  background-color: transparent;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 0.75rem;
+  /* transition: background-color 0.3s ease, color 0.3s ease;/ */
+  flex: 1;
+  /* text-align: center; */
+}
+
+#buttons .btn:hover {
   background-color: #05AFF2;
   color: #1E1E26;
 }
+
+#buttons .btn.active {
+  background-color: #05AFF2;
+  color: #1E1E26;
+  border-color: #05AFF2;
+}
+
+#buttons .btn {
+  transition: all 0.3s ease-in-out;
+}
+
+
 
 canvas {
   background-color: #1E1E26;
@@ -95,8 +163,15 @@ canvas:hover {
 
 /* Fade in animation */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Responsive: stack cards on small screens */

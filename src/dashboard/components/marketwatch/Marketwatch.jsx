@@ -30,7 +30,6 @@ export default function MarketWatch() {
         }
       } catch (err) {
         console.error("Market data error:", err);
-        setLoading(false);
       }
     };
 
@@ -39,8 +38,8 @@ export default function MarketWatch() {
 
   if (Loading) {
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ height: "100vh" }}>
-            <div className="spinner-border text-primary" role="status">
+        <div>
+            <div className="spinner" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
         </div>
@@ -69,7 +68,7 @@ export default function MarketWatch() {
     });
 
   return (
-    <div className="panelStyle">
+    <div className="panelStyle scrollPanel">
       <h2>Market Watch</h2>
 
       {/* Controls */}

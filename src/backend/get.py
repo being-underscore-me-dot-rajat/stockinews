@@ -24,9 +24,19 @@ def get_portfolio(decoded_token):
     # print("User_id for portfolio recieved")
     conn = get_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT ticker,quantity,price FROM stocks WHERE user_id = ?", (user_id,))
+    cursor.execute('''SELECT 
+    ticker, 
+    SUM(CASE WHEN action = 'BUY' THEN quantity ELSE 0 END) AS total_bought,
+    SUM(CASE WHEN action = 'SELL' THEN quantity ELSE 0 END) AS total_sold,
+    AVG(CASE WHEN action = 'BUY' THEN price ELSE NULL END) AS average_buy_price
+    FROM stocks
+    WHERE user_id = ?
+    GROUP BY ticker
+    HAVING total_bought - total_sold > 0
+''', (user_id,))
     rows = cursor.fetchall()
-    # print(rows)
+
+    print(rows)
     conn.close()
     if not rows:
         return jsonify({"error": "User not found"}), 404
@@ -36,7 +46,7 @@ def get_portfolio(decoded_token):
     for row in rows:
         ticker = row[0]
         quantity = row[1]
-        buy_price = row[2]
+        buy_price = row[3]
         current_price = get_price(ticker)  # Fetch live price
         portfolio.append({
             "ticker": ticker,

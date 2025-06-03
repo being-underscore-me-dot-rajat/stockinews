@@ -70,7 +70,7 @@ export default function Portfolio({ user }) {
   if (loading) {
     return (
         <div>
-            <div className="loading-spinner" role="status">
+            <div className="spinner" role="status">
                 <span className="visually-hidden">Loading...</span>
             </div>
         </div>
@@ -81,8 +81,8 @@ export default function Portfolio({ user }) {
   <div className="panel-content">
     <div className="portfolio-text">
       <h2>Portfolio Overview</h2>
-      <p><strong>Total Investment:</strong> ${totalInvestment.toFixed(2)}</p>
-      <p><strong>Current Value:</strong> ${currentValue.toFixed(2)}</p>
+      <p><strong>Total Investment:</strong> ₹{totalInvestment.toFixed(2)}</p>
+      <p><strong>Current Value:</strong> ₹{currentValue.toFixed(2)}</p>
       <p>
         <strong>Change:</strong> {percentChange.toFixed(2)}%
         {percentChange >= 0 ? " 🔼" : " 🔽"}

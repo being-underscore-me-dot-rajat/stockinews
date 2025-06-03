@@ -6,6 +6,7 @@ import Watchlist from './components/watchlist/watchlist';
 import News from './components/news/news';
 import Navbar from '../home/navbar/Navbar';
 import './dashboard.css';
+import Footer from '../home/navbar/footer/Footer';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -51,19 +52,20 @@ export default function Dashboard() {
   }, [navigate]);
 
   if (msg === "Loading...") {
-  return <div style={{ textAlign: "center", marginTop: "100px" }}>Loading Dashboard...</div>;
+  return <div className="loading-message" style={{ textAlign: "center", marginTop: "100px" }}>Loading Dashboard...</div>;
 }
 
 
   return (
     <>
     <Navbar/>
-    <div>
+    <div className='dashboard-grid'>
       <Portfolio user={user} />
       <Marketwatch/>
       <Watchlist/>
       <News />
     </div>
+    <Footer />
     </>
   );
 }

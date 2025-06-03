@@ -1,0 +1,57 @@
+.app-footer {
+  background-color: #1E1E26;
+  padding: 2rem 1rem;
+  color: #f5f5f5;
+  border-top: 1px solid #353540;
+  font-size: 0.95rem;
+  box-shadow: 0 -5px 15px rgba(5, 175, 242, 0.05);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.footer-logo img {
+  height: 30px;
+  width: auto;
+  filter: brightness(1.2);
+}
+
+.footer-logo span {
+  font-weight: 600;
+  color: #05AFF2;
+  font-size: 1.1rem;
+}
+
+.footer-links {
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.footer-links a {
+  color: #888;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: #28C947;
+}
+
+.footer-copy {
+  color: #666;
+  font-size: 0.85rem;
+}
