@@ -1,80 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './Dropdown.css';
+import { API_BASE } from '../../lib/api';
 
-function Dropdown({ onSelect, resetTrigger, token }) {
-  const [companies, setCompanies] = useState([]); // Fix: Initialize as array
-  const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCompanies, setFilteredCompanies] = useState([]);
+function Dropdown({ onSelect, resetTrigger }) {
+    const [searchTerm, setSearchTerm]   = useState('');
+    const [results, setResults]         = useState([]);
+    const [loading, setLoading]         = useState(false);
+    const debounceRef                   = useRef(null);
 
-  useEffect(() => {
-    fetch('http://127.0.0.1:5000/api/companies')
-      .then(response => response.json())
-      .then(data => {
-        setCompanies(data.Symbols || []);
-        setLoading(false);
-      })
-      .catch(error => {
-        console.error('Error fetching companies:', error);
-        setLoading(false);
-      });
-  }, []);
+    useEffect(() => {
+        setSearchTerm('');
+        setResults([]);
+    }, [resetTrigger]);
 
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = companies.filter(company =>
-        company.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredCompanies(filtered);
-    } else {
-      setFilteredCompanies([]);
-    }
-  }, [searchTerm, companies]);
+    const handleInputChange = (e) => {
+        const val = e.target.value;
+        setSearchTerm(val);
 
-  const handleInputChange = (e) => {
-    setSearchTerm(e.target.value);
-  };
+        clearTimeout(debounceRef.current);
+        if (val.trim().length < 2) {
+            setResults([]);
+            return;
+        }
 
-  const handleSelect = (company) => {
-    setSearchTerm(company);
-    setFilteredCompanies([]);
-    if (onSelect) onSelect(company);
-  };
-  useEffect(() => {
-    setSearchTerm("");
-    setFilteredCompanies([]);
-  }, [resetTrigger]);
+        debounceRef.current = setTimeout(async () => {
+            setLoading(true);
+            try {
+                const res = await fetch(
+                    `${API_BASE}/api/companies/search?q=${encodeURIComponent(val.trim())}`
+                );
+                const data = await res.json();
+                setResults(data.results || []);
+            } catch {
+                setResults([]);
+            } finally {
+                setLoading(false);
+            }
+        }, 300);
+    };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+    const handleSelect = (company) => {
+        setSearchTerm(company.display);
+        setResults([]);
+        if (onSelect) onSelect(company.nse_symbol);
+    };
 
-  return (
-    <div className='container'>
-      <div className="search-bar-container">
-        <input
-          type="text"
-          value={searchTerm}
-          onChange={handleInputChange}
-          placeholder="Search companies..."
-          className="search-bar-input"
-        />
-        {filteredCompanies.length > 0 && (
-          <ul className="suggestions-list" onMouseDown={(e) => e.stopPropagation()}>
-  {filteredCompanies.map((company, index) => (
-    <li
-      key={index}
-      onClick={() => handleSelect(company)}
-      className="suggestion-item"
-    >
-      {company}
-    </li>
-  ))}
-</ul>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <div className="dropdown-root">
+            <div className="search-bar-container">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                    placeholder="Search company or ticker (e.g. Reliance, TCS)…"
+                    className="search-bar-input"
+                    autoComplete="off"
+                />
+                {loading && (
+                    <div className="dropdown-loading">Searching…</div>
+                )}
+                {!loading && results.length > 0 && (
+                    <ul
+                        className="suggestions-list"
+                        onMouseDown={(e) => e.stopPropagation()}
+                    >
+                        {results.map((company, index) => (
+                            <li
+                                key={company.nse_symbol || index}
+                                onClick={() => handleSelect(company)}
+                                className="suggestion-item"
+                            >
+                                <span className="suggestion-symbol">{company.symbol}</span>
+                                <span className="suggestion-name">{company.name}</span>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export default Dropdown;

@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify
 import sqlite3
-DB_NAME = "src/backend/stockinews.db"
+from pathlib import Path
+from company_catalog import normalize_nse_symbol
+
+BASE_DIR = Path(__file__).resolve().parent
+DB_NAME = BASE_DIR / "stockinews.db"
 
 def get_connection():
     return sqlite3.connect(DB_NAME)
 
 def add_watchlist(user_id):
-    symbol = request.json.get("symbol", "").upper()
-    symbol=symbol.split()[0]
-    symbol=symbol+'.NS'
+    symbol = normalize_nse_symbol(request.json.get("symbol", ""))
     if not symbol:
         return jsonify({"error": "Symbol is required"}), 400
 

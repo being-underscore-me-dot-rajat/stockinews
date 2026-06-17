@@ -3,10 +3,12 @@ import bcrypt
 import jwt
 import datetime
 import os
+from pathlib import Path
 from flask import Flask, request, jsonify
 
 
-DB_NAME = "src/backend/stockinews.db"
+BASE_DIR = Path(__file__).resolve().parent
+DB_NAME = BASE_DIR / "stockinews.db"
 JWT_SECRET = os.getenv("JWT_SECRET", "supersecretkey")  # Change this in production!
 JWT_ALGORITHM = "HS256"
 JWT_EXP_DELTA_SECONDS = 3600  # Token valid for 1 hour
@@ -82,3 +84,24 @@ def signup(name,email,password):
         "message": "User registered successfully",
         "token": token
     }), 201
+
+def reset_password(email, password):
+    if not email or not password:
+        return jsonify({"error": "Email and new password are required"}), 400
+
+    hashed_pw = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "UPDATE users SET password = ? WHERE email = ?",
+        (hashed_pw, email)
+    )
+    conn.commit()
+    updated_count = cursor.rowcount
+    conn.close()
+
+    if updated_count == 0:
+        return jsonify({"error": "No account found with that email"}), 404
+
+    return jsonify({"message": "Password reset successful. Please log in."}), 200

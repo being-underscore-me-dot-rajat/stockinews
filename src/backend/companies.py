@@ -1,5 +1,5 @@
-import pandas as pd
+from company_catalog import get_display_symbols, load_companies
 
-df=pd.read_csv('src/backend/EQUITY_L.csv')
-df['Symbols']=df['SYMBOL']+" : "+df['NAME OF COMPANY']
-Symbols=df['Symbols'].to_list()
+
+Companies = load_companies()
+Symbols = get_display_symbols()

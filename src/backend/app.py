@@ -6,24 +6,28 @@ import bcrypt
 from functools import wraps
 import os
 import ticker_data
-from companies import Symbols
-from auth import login_user,signup
+from companies import Companies, Symbols
+from auth import login_user, signup, reset_password
 import get
 import add
 import delete
 import portfolios
+import news_crawler
 from dotenv import load_dotenv
 load_dotenv()
 JWT_SECRET = os.getenv("JWT_SECRET")
 
 
 app = Flask(__name__,template_folder='../Templates')
-CORS(app, origins=["http://localhost:5173"], supports_credentials=True)
+CORS(app, origins=[
+    "http://localhost:5173",
+    "http://localhost:5174",
+], supports_credentials=True)
 
 
 @app.route('/api/companies', methods=['GET'])
 def get_symb():
-    return jsonify({"Symbols": Symbols})
+    return jsonify({"Symbols": Symbols, "companies": Companies})
 
 @app.route('/api/details', methods=['GET'])
 def get_company_details():
@@ -47,9 +51,10 @@ def get_company_details():
 @app.route('/api/chart')
 def genchart():
     ticker = request.args.get('ticker').split(":")[0]
-    period=request.args.get('period')
+    period=request.args.get('period') or "7d"
     # print("Ticker and Period",ticker,period)
     data = ticker_data.getdata(ticker,period)
+    ticker_data.warm_cache(ticker)
     # print(data)
     return jsonify(data)
 
@@ -69,6 +74,11 @@ def login_route():
 def newuser():
     data = request.get_json()
     return signup(data.get("name"), data.get("email"), data.get("password"))
+
+@app.route('/reset-password', methods=['POST'])
+def reset_password_route():
+    data = request.get_json()
+    return reset_password(data.get("email"), data.get("password"))
 
 def token_required(f):
     @wraps(f)
@@ -138,6 +148,61 @@ def get_news():
     except Exception as e:
         print("Error fetching news:", e)
         return jsonify({"news": [], "error": "Could not fetch news"}), 500
+
+@app.route("/api/crawler/news", methods=["GET"])
+def crawl_news_route():
+    try:
+        source = request.args.get("source", "all")
+        query = request.args.get("query")
+        limit = min(int(request.args.get("limit", 40)), 100)
+        articles = news_crawler.crawl_news(source=source, limit=limit, query=query)
+        return jsonify({"articles": articles, "count": len(articles)})
+    except ValueError as e:
+        return jsonify({"articles": [], "error": str(e)}), 400
+    except Exception as e:
+        print("Error crawling news:", e)
+        return jsonify({"articles": [], "error": "Could not crawl news"}), 500
+
+@app.route("/api/crawler/sources", methods=["GET"])
+def crawler_sources_route():
+    return jsonify({"sources": ["all", *news_crawler.SOURCES.keys()]})
+
+@app.route("/api/company/news", methods=["GET"])
+def company_news():
+    try:
+        ticker = request.args.get("ticker", "").strip().upper()
+        if not ticker:
+            return jsonify({"error": "ticker parameter is required"}), 400
+        limit = min(int(request.args.get("limit", 15)), 50)
+        articles = news_crawler.crawl_news_for_ticker_cached(ticker=ticker, limit=limit)
+        return jsonify({"ticker": ticker, "articles": articles, "count": len(articles)})
+    except Exception as e:
+        print(f"Error fetching company news for {request.args.get('ticker')}: {e}")
+        return jsonify({"articles": [], "error": "Could not fetch company news"}), 500
+
+@app.route("/api/company/info", methods=["GET"])
+def company_info():
+    try:
+        ticker = request.args.get("ticker", "").strip().upper()
+        if not ticker:
+            return jsonify({"error": "ticker parameter is required"}), 400
+        info = get.get_company_info(ticker)
+        return jsonify(info)
+    except Exception as e:
+        print(f"Error fetching company info for {request.args.get('ticker')}: {e}")
+        return jsonify({"error": "Could not fetch company info"}), 500
+
+@app.route("/api/company/developments", methods=["GET"])
+def company_developments():
+    try:
+        ticker = request.args.get("ticker", "").strip().upper()
+        if not ticker:
+            return jsonify({"error": "ticker parameter is required"}), 400
+        data = get.get_company_developments(ticker)
+        return jsonify(data)
+    except Exception as e:
+        print(f"Error fetching developments for {request.args.get('ticker')}: {e}")
+        return jsonify({"error": "Could not fetch company developments"}), 500
     
 @app.route("/api/portfolios", methods=["GET"])
 @token_required

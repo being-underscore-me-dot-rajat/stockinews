@@ -1,0 +1,190 @@
+/* ── AI Briefing ───────────────────────────────────────────────────────────── */
+
+.br-gen-btn {
+  height: 26px;
+  padding: 0 0.75rem;
+  background: var(--emerald-dim);
+  border: 1px solid rgba(0,210,150,0.3);
+  border-radius: 5px;
+  color: var(--emerald);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.br-gen-btn:hover:not(:disabled) {
+  background: rgba(0,210,150,0.2);
+  box-shadow: 0 0 10px rgba(0,210,150,0.2);
+}
+
+.br-gen-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.br-body {
+  padding: 1rem;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Idle prompt */
+.br-idle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.br-idle-icon { font-size: 1.75rem; opacity: 0.35; }
+
+.br-idle p {
+  margin: 0;
+  font-size: 13px;
+  /* CONTRAST FIX */
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.br-idle small {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Loading */
+.br-loading {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-size: 12px;
+  font-family: var(--font-mono);
+  /* CONTRAST FIX */
+  color: var(--text-secondary);
+  padding: 0.5rem 0;
+}
+
+/* Error */
+.br-error {
+  padding: 0.65rem 0.85rem;
+  background: var(--negative-dim);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 6px;
+  color: var(--negative-mid);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+/* Result */
+.br-result {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  animation: fadeUp 0.25s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.br-result-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+/* Sentiment badge */
+.br-sent {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+.br-bull { background: var(--positive-dim);         color: var(--positive-mid); border: 1px solid rgba(34,197,94,0.25); }
+.br-bear { background: var(--negative-dim);         color: var(--negative-mid); border: 1px solid rgba(239,68,68,0.25); }
+.br-neut { background: rgba(255,255,255,0.06);      color: var(--text-secondary); border: 1px solid var(--border-medium); }
+
+.br-conf {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  /* CONTRAST FIX */
+  color: var(--text-secondary);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-soft);
+  padding: 2px 7px;
+  border-radius: 3px;
+}
+
+.br-theme {
+  background: var(--emerald-dim);
+  color: var(--emerald);
+  border: 1px solid rgba(0,210,150,0.2);
+  border-radius: 3px;
+  padding: 2px 7px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.br-summary {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  /* CONTRAST FIX */
+  color: var(--text-secondary);
+}
+
+.br-impact {
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--border-medium);
+  line-height: 1.5;
+}
+
+.br-sources {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border-soft);
+}
+
+.br-sources-label {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.1rem;
+}
+
+.br-src-link {
+  display: block;
+  font-size: 11.5px;
+  color: var(--ice);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.12s;
+}
+
+.br-src-link:hover { color: var(--emerald); }
+.br-src-link em { color: var(--text-muted); font-style: normal; }

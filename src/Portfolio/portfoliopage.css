@@ -1,145 +1,364 @@
-/* Base Layout */
-body, html {
-  background-color: #1E1E26;
-  color: #ffffff;
-  font-family: 'Segoe UI', sans-serif;
-  margin: 0;
-  padding: 0;
-}
+/* ── Portfolio page ────────────────────────────────────────────────────────── */
 
 .portfolio-container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: auto;
-  animation: fadeIn 0.8s ease-in;
+  width: min(1320px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1.1rem 0 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-/* Section Title */
-.section-title {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 1.5rem;
+/* ── Top header — title + P&L summary ─────────────────────────────────────── */
+
+.pp-header {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
 }
 
-/* Table Styling */
-.portfolio-table {
+.pp-header-accent {
+  height: 2px;
+  background: linear-gradient(90deg, var(--emerald) 0%, rgba(0,210,150,0.2) 60%, transparent 100%);
+}
+
+.pp-header-inner {
+  display: flex;
+  align-items: stretch;
+  min-height: 68px;
+}
+
+.pp-title-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3px;
+  padding: 0.85rem 1.4rem;
+  border-right: 1px solid var(--border-soft);
+  background: var(--bg-raised);
+  min-width: 180px;
+}
+
+.pp-page-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.pp-page-sub {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.pp-summary {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.pp-summary::-webkit-scrollbar { display: none; }
+
+.pp-stat {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  padding: 0.8rem 1.4rem;
+  flex: 1;
+  min-width: 120px;
+  transition: background 0.15s;
+}
+
+.pp-stat:hover { background: var(--bg-hover); }
+
+.pp-stat + .pp-stat { border-left: 1px solid var(--border-dim); }
+
+.pp-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.pp-stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.pp-stat-value.up   { color: var(--positive-mid); }
+.pp-stat-value.down { color: var(--negative-mid); }
+
+/* ── Holdings table ────────────────────────────────────────────────────────── */
+
+.pp-table-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pp-table-head-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 1rem;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pp-table-head-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.pp-table-actions {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.pp-btn {
+  height: 28px;
+  padding: 0 0.8rem;
+  border-radius: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.pp-btn-primary {
+  background: var(--emerald-dim);
+  border: 1px solid rgba(0,210,150,0.3);
+  color: var(--emerald);
+}
+
+.pp-btn-primary:hover {
+  background: rgba(0,210,150,0.2);
+  box-shadow: 0 0 8px rgba(0,210,150,0.15);
+}
+
+.pp-btn-ghost {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-secondary);
+}
+
+.pp-btn-ghost:hover {
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+/* Table itself */
+.pp-table-scroll { overflow-x: auto; }
+
+.pp-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 2rem;
-  background-color: #2D2D37;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.6s ease-out;
 }
 
-.portfolio-table th,
-.portfolio-table td {
-  padding: 1rem;
-  text-align: center;
+.pp-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--bg-surface);
 }
 
-.portfolio-table th {
-  background-color: #353540;
-  color: #05AFF2;
+.pp-table th {
+  padding: 0.6rem 1rem;
+  text-align: left;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
-  font-weight: 500;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-soft);
+  white-space: nowrap;
 }
 
-.portfolio-table tr:nth-child(even) {
-  background-color: #2D2D37;
+.pp-table th.right { text-align: right; }
+
+.pp-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-dim);
+  vertical-align: middle;
 }
 
-.portfolio-table tr:nth-child(odd) {
-  background-color: #1E1E26;
+.pp-table td.right {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  color: var(--text-secondary);
 }
 
-.portfolio-table td {
-  color: #e0e0e0;
-}
+.pp-table tr:last-child td { border-bottom: none; }
+.pp-table tbody tr:hover td { background: var(--bg-hover); }
 
-/* Buttons */
-button {
-  background-color: #05AFF2;
-  color: #ffffff;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-button:hover {
-  background-color: #28C947;
-  box-shadow: 0 0 10px #28C947aa;
-  transform: scale(1.05);
-}
-
-/* Forms */
-.form-section {
-  margin-top: 2rem;
-  background-color: #2D2D37;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 0 8px rgba(5, 175, 242, 0.3);
-  animation: fadeIn 1s ease;
-}
-
-input {
-  padding: 0.5rem;
-  margin: 0.5rem;
-  background-color: #1E1E26;
-  border: 1px solid #353540;
-  border-radius: 6px;
-  color: #ffffff;
-  transition: border-color 0.3s ease;
-}
-
-input:focus {
-  border-color: #05AFF2;
-  outline: none;
-}
-
-/* Message */
-.message {
-  background-color: #353540;
-  padding: 1rem;
-  margin: 1rem 0;
-  border-left: 4px solid #05AFF2;
-  border-radius: 4px;
-  color: #ffffff;
-  animation: fadeIn 0.4s ease-out;
-}
-
-/* Link Styling */
-a {
-  color: #05AFF2;
-  transition: color 0.3s ease;
+/* Ticker link — the identity column */
+.pp-ticker-link {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--emerald);
   text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.12s;
 }
 
-a:hover {
-  color: #28C947;
-  text-decoration: underline;
+.pp-ticker-link:hover { color: var(--ice); }
+
+.pp-pnl-pos { color: var(--positive-mid) !important; }
+.pp-pnl-neg { color: var(--negative-mid) !important; }
+
+/* Sell form row */
+.pp-sell-row td {
+  background: var(--bg-raised);
+  padding: 0.65rem 1rem;
 }
 
-/* Loading Spinner */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
-  border-width: 0.3em;
-  color: #05AFF2;
+.pp-sell-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+.pp-sell-input {
+  height: 30px;
+  width: 100px;
+  padding: 0 0.65rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.15s;
 }
 
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+.pp-sell-input:focus { border-color: rgba(0,210,150,0.4); }
+
+.pp-btn-sell {
+  height: 30px;
+  padding: 0 0.8rem;
+  background: var(--negative-dim);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 5px;
+  color: var(--negative-mid);
+  font-size: 11.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.pp-btn-sell:hover {
+  background: rgba(239,68,68,0.18);
+  border-color: rgba(239,68,68,0.4);
+}
+
+/* ── Add stock form ──────────────────────────────────────────────────────────── */
+
+.pp-add-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.pp-add-card-head {
+  padding: 0.65rem 1rem;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.pp-add-form {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) repeat(2, minmax(110px, 150px)) auto;
+  gap: 0.65rem;
+  align-items: end;
+  padding: 0.85rem 1rem;
+}
+
+.pp-add-input {
+  height: 34px;
+  padding: 0 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  outline: none;
+  transition: border-color 0.15s;
+  width: 100%;
+}
+
+.pp-add-input:focus { border-color: rgba(0,210,150,0.4); }
+
+.pp-add-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* ── Message ────────────────────────────────────────────────────────────────── */
+
+.pp-message {
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  font-size: 12.5px;
+  border: 1px solid rgba(90,180,229,0.2);
+  background: var(--ice-dim);
+  color: var(--ice);
+}
+
+/* ── Page loader ────────────────────────────────────────────────────────────── */
+
+.page-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+@media (max-width: 780px) {
+  .pp-table-scroll { overflow-x: auto; }
+  .pp-add-form { grid-template-columns: 1fr; }
+  .pp-title-block { min-width: unset; }
+  .pp-stat { min-width: 100px; padding: 0.75rem 1rem; }
+  .pp-stat-value { font-size: 0.95rem; }
 }

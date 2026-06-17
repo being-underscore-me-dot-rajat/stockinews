@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+supabase
+python-dotenv
+yfinance
+pandas
+numpy
+scipy
+requests
+beautifulsoup4
+nltk
+reportlab
+openai
+apscheduler
+psutil
+httpx

@@ -1,117 +1,140 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import './marketwatch.css';
+import { API_BASE } from '../../../lib/api';
+import Tip from '../../../lib/Tip';
 
-const MARKET_GROUPS = {
-  index: ["^GSPC", "^DJI", "^IXIC", "^FTSE", "^GDAXI", "^FCHI", "^N225", "^HSI", "000001.SS", "^NSEI"],
-  commodity: ["GC=F", "SI=F", "CL=F", "BZ=F", "NG=F", "HG=F"]
+const GROUPS = {
+  index:     ["^GSPC","^DJI","^IXIC","^FTSE","^GDAXI","^FCHI","^N225","^HSI","000001.SS","^NSEI"],
+  commodity: ["GC=F","SI=F","CL=F","BZ=F","NG=F","HG=F"],
+};
+
+const CACHE_KEY = 'dashboard-market-open-v1';
+const CACHE_TTL = 8 * 60 * 60 * 1000;
+
+const getCache = () => {
+  try {
+    const c = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+    if (!c || Date.now() - c.savedAt > CACHE_TTL) return null;
+    return Array.isArray(c.data) ? c.data : null;
+  } catch { return null; }
+};
+
+const setCache = (data) => {
+  try { localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data })); }
+  catch {}
 };
 
 export default function MarketWatch() {
-  const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [sortKey, setSortKey] = useState("name");
-  const [sortAsc, setSortAsc] = useState(true);
-  const [filterType, setFilterType] = useState("all");
-  const [Loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
+  const [data,       setData]       = useState([]);
+  const [search,     setSearch]     = useState('');
+  const [sortKey,    setSortKey]    = useState('name');
+  const [sortAsc,    setSortAsc]    = useState(true);
+  const [filterType, setFilterType] = useState('all');
+  const [loading,    setLoading]    = useState(true);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
-    const fetchMarket = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/marketwatch", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const result = await res.json();
-        if (res.ok) {
-          setData(result.market);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("Market data error:", err);
-      }
-    };
+    const cached = getCache();
+    if (cached) { setData(cached); setLoading(false); }
+    fetch(`${API_BASE}/marketwatch`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { const m = d.market || []; setData(m); setCache(m); })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, [token]);
 
-    fetchMarket();
-  }, []);
-
-  if (Loading) {
-    return (
-        <div>
-            <div className="spinner" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    );}
-
-  const getGroup = (symbol) => {
-    if (MARKET_GROUPS.index.includes(symbol)) return "Index";
-    if (MARKET_GROUPS.commodity.includes(symbol)) return "Commodity";
-    return "Other";
+  const group = (sym) => {
+    if (GROUPS.index.includes(sym))     return 'index';
+    if (GROUPS.commodity.includes(sym)) return 'commodity';
+    return 'other';
   };
 
-  const filtered = data
-    .filter(item =>
-      item.name?.toLowerCase().includes(search.toLowerCase()) ||
-      item.symbol.toLowerCase().includes(search.toLowerCase())
-    )
-    .filter(item => {
-      if (filterType === "all") return true;
-      return getGroup(item.symbol).toLowerCase() === filterType;
+  const filtered = [...data]
+    .filter(i => {
+      const q = search.toLowerCase();
+      return !q || i.name?.toLowerCase().includes(q) || i.symbol?.toLowerCase().includes(q);
     })
+    .filter(i => filterType === 'all' || group(i.symbol) === filterType)
     .sort((a, b) => {
-      const valA = a[sortKey];
-      const valB = b[sortKey];
-      if (valA == null || valB == null) return 0;
-      return sortAsc ? valA - valB : valB - valA;
+      const va = a[sortKey], vb = b[sortKey];
+      if (va == null) return 1;
+      if (vb == null) return -1;
+      return sortAsc
+        ? (typeof va === 'string' ? va.localeCompare(vb) : va - vb)
+        : (typeof va === 'string' ? vb.localeCompare(va) : vb - va);
     });
 
   return (
-    <div className="panelStyle scrollPanel">
-      <h2>Market Watch</h2>
+    <div className="db-panel">
+      <div className="db-panel-accent" />
+      <div className="db-panel-header">
+        <span className="db-panel-name">Market Watch</span>
+        <span className="db-panel-badge">{filtered.length} shown</span>
+      </div>
 
       {/* Controls */}
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1rem" }}>
+      <div className="mw-controls">
         <input
+          className="mw-input"
           type="text"
-          placeholder="Search by name or symbol..."
+          placeholder="Search markets…"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: "0.5rem", flexGrow: 1 }}
+          onChange={e => setSearch(e.target.value)}
         />
-        <select onChange={(e) => setFilterType(e.target.value)} value={filterType}>
+        <select className="mw-select" value={filterType} onChange={e => setFilterType(e.target.value)}>
           <option value="all">All</option>
           <option value="index">Indices</option>
           <option value="commodity">Commodities</option>
         </select>
-        <select onChange={(e) => setSortKey(e.target.value)} value={sortKey}>
+        <select className="mw-select" value={sortKey} onChange={e => setSortKey(e.target.value)}>
           <option value="name">Name</option>
-          <option value="price">Price</option>
-          <option value="percent_change">Change %</option>
+          <option value="open_price">Price</option>
         </select>
-        <button onClick={() => setSortAsc(!sortAsc)}>
-          Sort {sortAsc ? "▲" : "▼"}
+        <button className="mw-sort" onClick={() => setSortAsc(a => !a)}>
+          {sortAsc ? '↑' : '↓'}
         </button>
       </div>
 
-      {/* Market Data Grid */}
-      <div style={{ display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))" }}>
-        {filtered.map((item, idx) => (
-          <div key={idx} className="market-card">
-
-            <h4>{item.name || item.symbol}</h4>
-            <p><strong>Symbol:</strong> {item.symbol}</p>
-            <p><strong>Price:</strong> ${item.price?.toFixed(2) ?? "N/A"}</p>
-            <p>
-              <strong>Change:</strong>{" "}
-              <span className={item.percent_change >= 0 ? "positive" : "negative"}>
-                {item.percent_change?.toFixed(2) ?? "0.00"}%
-              </span>
-            </p>
-            <small>{getGroup(item.symbol)}</small>
+      <div className="db-panel-body">
+        {loading ? (
+          <div style={{ display:'flex', justifyContent:'center', padding:'2.5rem' }}>
+            <div className="spinner" style={{ width:28, height:28, borderWidth:2, margin:0 }} />
           </div>
-        ))}
+        ) : filtered.length === 0 ? (
+          <div className="mw-empty">No results for "{search}"</div>
+        ) : (
+          <table className="mw-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th className="mw-right">Open <Tip text="Today's opening price at market open" /></th>
+                <th className="mw-right">Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((item, i) => {
+                const g = group(item.symbol);
+                return (
+                  <tr key={item.symbol || i}>
+                    <td><span className="mw-sym">{item.symbol}</span></td>
+                    <td><span className="mw-name">{item.name || item.symbol}</span></td>
+                    <td className="mw-right">
+                      <span className="mw-price">
+                        {item.open_price != null ? item.open_price.toLocaleString('en-IN') : '—'}
+                      </span>
+                    </td>
+                    <td className="mw-right">
+                      <span className={`mw-tag mw-tag-${g}`}>
+                        {g === 'index' ? 'Index' : g === 'commodity' ? 'Commod.' : 'Other'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

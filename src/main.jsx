@@ -1,13 +1,15 @@
-import { StrictMode } from 'react'
+import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css'
-import App from './App'
 import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './index.css';
+import App from './App';
+import { applyChartDefaults } from './lib/chartTheme';
 
+// Apply Chart.js dark theme globally before any chart renders
+applyChartDefaults();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  <StrictMode>
     <App />
-  </React.StrictMode>
+  </StrictMode>
 );

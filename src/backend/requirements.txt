@@ -1,0 +1,11 @@
+beautifulsoup4
+bcrypt
+dnspython>=2.6
+Flask
+flask-cors
+nltk
+pandas
+PyJWT
+python-dotenv
+requests
+yfinance

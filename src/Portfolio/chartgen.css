@@ -1,47 +1,103 @@
-.charts-section {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 1rem;
-}
+/* ── Portfolio charts ───────────────────────────────────────────────────────── */
 
-.charts-row {
+.cg-wrap {
   display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cg-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cg-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+/* Two-column row for donut + bar */
+.cg-top-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 0.75rem;
+}
+
+/* ── Individual chart card ──────────────────────────────────────────────────── */
+
+.cg-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 1rem 1.1rem 1.1rem;
+}
+
+.cg-card-line {
+  /* Full width when standalone */
+}
+
+/* Card header */
+.cg-card-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
-  gap: 30px;
+}
+
+.cg-card-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.cg-card-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.cg-card-pnl {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.cg-card-pnl.up   { color: var(--positive-mid); }
+.cg-card-pnl.down { color: var(--negative-mid); }
+
+/* Donut centering */
+.cg-donut-wrap {
+  max-height: 260px;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-bottom: 40px;
 }
 
-.chart-wrapper {
-  background: var(--bg-panel, #2d2d37);
-  padding: 1rem;
-  border-radius: 1rem;
-  box-shadow: 0 0 15px rgba(5, 175, 242, 0.15);
-  color: white;
-  /* text-align: center; */
+/* States */
+.cg-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2.5rem;
 }
 
-.chart-wrapper.pie {
-  width: 600px;
+.cg-empty {
+  padding: 2rem 0.5rem;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
 }
 
-.chart-wrapper.bar {
-  width: 800px;
-}
-
-.chart-wrapper.line {
-  width: 100%;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-@media (max-width: 850px) {
-  .charts-row {
-    flex-direction: column;
-    align-items: center;
-  }
-  .chart-wrapper.bar,
-  .chart-wrapper.pie {
-    width: 90%;
-  }
+@media (max-width: 720px) {
+  .cg-top-row { grid-template-columns: 1fr; }
+  .cg-donut-wrap { max-height: 220px; }
 }

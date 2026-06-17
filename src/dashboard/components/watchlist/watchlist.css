@@ -1,185 +1,137 @@
-:root {
-  --bg-dark: #1E1E26;
-  --bg-panel: #2D2D37;
-  --bg-card: #353540;
-  --accent-green: #28C947;
-  --accent-blue: #05AFF2;
-  --text-light: #F5F5F5;
-  --text-muted: #999;
-  --radius: 1rem;
-  --transition: 0.3s ease;
-  --glow: 0 0 20px rgba(5, 175, 242, 0.3);
-}
+/* ── Watchlist ──────────────────────────────────────────────────────────────── */
 
-/* 📦 Panel */
-.panelStyle {
-  background: rgba(45, 45, 55, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--bg-card);
-  border-radius: var(--radius);
-  padding: 2rem;
-  color: var(--text-light);
-  box-shadow: var(--glow);
-  animation: fadeIn 0.7s ease-in-out forwards;
-}
-
-.loading-spinner {
+.wl-add-row {
   display: flex;
-  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid var(--border-soft);
+  background: var(--bg-raised);
   align-items: center;
-  height: 100%;
 }
 
-.spinner {
-  border: 6px solid rgba(255, 255, 255, 0.1);
-  border-top: 6px solid var(--accent-blue);
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  animation: spin 1.2s linear infinite;
-}
+.wl-add-row .dropdown-root { flex: 1; }
 
-/* 🧾 Title */
-.panelStyle h2 {
-  color: var(--accent-blue);
-  margin-bottom: 1rem;
-  font-size: 1.6rem;
-  text-shadow: 0 0 8px rgba(5, 175, 242, 0.3);
-}
-
-/* ➕ Add Controls */
-.panelStyle button {
-  padding: 0.4rem 1rem;
-  background-color: var(--accent-blue);
-  border: none;
-  border-radius: var(--radius);
-  color: white;
-  font-weight: 600;
+.wl-add-btn {
+  height: 30px;
+  padding: 0 0.8rem;
+  background: var(--emerald-dim);
+  border: 1px solid rgba(0,210,150,0.3);
+  border-radius: 5px;
+  color: var(--emerald);
+  font-size: 11.5px;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color var(--transition), transform var(--transition);
+  white-space: nowrap;
+  transition: all 0.15s;
+  flex-shrink: 0;
 }
 
-.panelStyle button:hover {
-  background-color: #0792cc;
-  transform: scale(1.05);
+.wl-add-btn:hover {
+  background: rgba(0,210,150,0.2);
+  box-shadow: 0 0 8px rgba(0,210,150,0.15);
 }
 
-.panelStyle input {
-  padding: 0.4rem 0.8rem;
-  border-radius: var(--radius);
-  border: 1px solid var(--bg-card);
-  background-color: var(--bg-dark);
-  color: white;
+/* ── Rows ──────────────────────────────────────────────────────────────────── */
+
+.wl-row {
+  display: grid;
+  grid-template-columns: 72px 1fr auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid var(--border-dim);
+  transition: background 0.12s;
 }
 
-/* 🗃️ Watchlist Cards */
-.panelStyle a {
+.wl-row:last-child { border-bottom: none; }
+.wl-row:hover { background: var(--bg-hover); }
+
+.wl-ticker {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  /* emerald for interactive link */
+  color: var(--emerald);
+  letter-spacing: 0.02em;
   text-decoration: none;
-  color: inherit;
+  transition: color 0.12s;
+  white-space: nowrap;
 }
 
-.panelStyle{
-  background-color: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 1rem;
-  border: 1px solid transparent;
-  transition: transform var(--transition), box-shadow var(--transition);
-  cursor: pointer;
-  /* position: relative; */
+.wl-ticker:hover { color: var(--ice); }
+
+.wl-name {
+  font-size: 12px;
+  /* CONTRAST FIX: --text-secondary not --text-muted */
+  color: var(--text-secondary);
+  white-space: nowrap;
   overflow: hidden;
-  /* z-index: -1; */
+  text-overflow: ellipsis;
 }
 
-.watch-card {
-  background-color: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 1rem;
-  border: 1px solid transparent;
-  transition: transform var(--transition), box-shadow var(--transition);
-  cursor: pointer;
-  /* position: relative; */
-  overflow: hidden;
-  z-index: auto;
+.wl-price-cell {
+  text-align: right;
 }
 
-.panelStyle .watch-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 0 20px rgba(5, 175, 242, 0.2);
-  border-color: var(--accent-blue);
+.wl-price {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
 }
 
-/* 🧾 Card Content */
-.watch-card h4 {
-  margin: 0;
-  font-size: 1.2rem;
-  color: var(--accent-green);
+.wl-price-sub {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 1px;
 }
 
-.watch-card p {
-  margin: 0.25rem 0;
-  color: var(--text-light);
-  font-size: 0.95rem;
-}
-
-.watch-card p strong {
-  color: var(--accent-blue);
-}
-
-.watch-card .negative {
-  color: #f87171;
-}
-
-.watch-card .positive {
-  color: var(--accent-green);
-}
-
-/* 🗑 Remove button */
-.watch-card button {
-  margin-top: 0.75rem;
-  background-color: transparent;
-  border: 1px solid var(--accent-blue);
-  color: var(--accent-blue);
-  padding: 0.3rem 0.7rem;
-  border-radius: 0.5rem;
-  font-size: 0.8rem;
-  cursor: pointer;
-  transition: background-color var(--transition), color var(--transition);
-}
-
-.watch-card button:hover {
-  background-color: var(--accent-blue);
-  color: #1E1E26;
-}
-
-/* ✨ Animations */
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-.scrollPanel {
-  max-height: 70vh; /* Adjust as needed */
-  overflow-y: auto;
-  padding-right: 1rem; /* space for scrollbar */
-}
-
-/* Optional: Smooth scrolling */
-.scrollPanel::-webkit-scrollbar {
-  width: 8px;
-}
-
-.scrollPanel::-webkit-scrollbar-thumb {
-  background-color: rgba(14, 165, 233, 0.3);
-  border-radius: 4px;
-}
-
-.scrollPanel::-webkit-scrollbar-track {
+.wl-remove {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.12s;
+  flex-shrink: 0;
+  opacity: 0;
+}
+
+.wl-row:hover .wl-remove { opacity: 1; }
+
+.wl-remove:hover {
+  background: var(--negative-dim);
+  border-color: rgba(239,68,68,0.3);
+  color: var(--negative-mid);
+}
+
+.wl-empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  font-size: 13px;
+  /* CONTRAST FIX */
+  color: var(--text-secondary);
+}
+
+.wl-empty p {
+  margin: 0.35rem 0 0;
+  font-size: 11.5px;
+  color: var(--text-muted);
 }

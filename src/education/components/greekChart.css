@@ -1,0 +1,68 @@
+.gc-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gc-canvas-wrap { height: 260px; position: relative; }
+
+.gc-annotations {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.gc-annotation {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 5px;
+  border: 1px solid var(--border-dim);
+  border-left-width: 3px;
+}
+
+.gc-ann-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.gc-insight {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-overlay);
+  border-radius: 7px;
+  border-left: 3px solid var(--accent);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.gc-insight-icon { color: var(--accent); flex-shrink: 0; line-height: 1.55; }
+
+.gc-skeleton {
+  height: 260px;
+  background: linear-gradient(90deg, var(--bg-overlay) 25%, var(--bg-raised) 50%, var(--bg-overlay) 75%);
+  background-size: 200% 100%;
+  animation: gc-shimmer 1.4s ease infinite;
+  border-radius: 8px;
+}
+
+@keyframes gc-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.gc-error {
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 13px;
+}

@@ -1,0 +1,45 @@
+16-05-2026
+Not:
+
+“Sentiment analysis using BERT”
+
+but:
+
+“Cloud-native RAG-based financial intelligence platform.”
+
+
+Start with data ingestion pipeline
+
+Build connectors for wvery wehsite.
+moneycontrol_adapter.py
+mint_adapter.py
+economic_times_adapter.py
+rbi_adapter.py
+
+this hsould be the fromat
+{
+  "title": "",
+  "source": "",
+  "published_at": "",
+  "companies": [],
+  "sector": "",
+  "url": "",
+  "article_text": "",
+  "summary": "",
+  "embedding": []
+}
+
+preprocessing pipeline
+
+Steps:
+
+clean HTML
+remove ads/navigation
+deduplicate
+normalize timestamps
+detect language
+extract entities
+chunk text
+generate embeddings
+
+

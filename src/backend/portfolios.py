@@ -1,10 +1,14 @@
 from flask import Flask, request, jsonify,send_file
 import sqlite3
 from io import BytesIO
+from pathlib import Path
+from company_catalog import normalize_nse_symbol
 
 
 
-DB_NAME = "src/backend/stockinews.db"
+BASE_DIR = Path(__file__).resolve().parent
+REPO_ROOT = BASE_DIR.parent.parent
+DB_NAME = BASE_DIR / "stockinews.db"
 
 def get_connection():
     return sqlite3.connect(DB_NAME)
@@ -75,11 +79,14 @@ def add_stock(decoded_token):
     if not all(field in data for field in required_fields):
         return jsonify({"error": "Missing fields"}), 400
 
-    ticker = data['ticker'].split()[0]+".NS"
+    ticker = normalize_nse_symbol(data['ticker'])
     quantity = int(data['quantity'])
     price = float(data['price'])
     action = data['action'].strip().upper()
     user_id = decoded_token['user_id']
+
+    if not ticker:
+        return jsonify({"error": "Invalid ticker"}), 400
 
     if action not in ['BUY', 'SELL']:
         return jsonify({"error": "Invalid action. Must be 'BUY' or 'SELL'."}), 400
@@ -107,7 +114,7 @@ def sell_stock(decoded_token):
     data = request.get_json()
     user_id = decoded_token['user_id']
 
-    ticker = data.get("ticker", "").strip().upper()
+    ticker = normalize_nse_symbol(data.get("ticker", ""))
     quantity = int(data.get("quantity", 0))
     price = float(data.get("price", 0))
 
@@ -173,7 +180,7 @@ def download_portfolio_history(decoded_token):
     pdf = canvas.Canvas(pdf_buffer, pagesize=letter)
     width, height = letter
     y = height - 80
-    logo_path = "public/images/logo.png"  # Ensure this path is correct
+    logo_path = REPO_ROOT / "public" / "images" / "logo.png"
     try:
         logo = ImageReader(logo_path)
         pdf.drawImage(logo, 50, y, width=50, height=50, mask='auto')

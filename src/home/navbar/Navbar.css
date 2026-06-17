@@ -1,78 +1,161 @@
-.navbar {
-  display: flex;
-  justify-content: space-between; /* Pushes logo left, button right */  
-  background-color: #2D2D37;
-   /* align-items: center; */
-  padding: 5rem;
-  box-shadow: 0 2px 10px rgba(5, 175, 242, 0.2);
+/* ── Navbar — no Bootstrap dependency ─────────────────────────────────────── */
+
+.sn-navbar {
   position: sticky;
   top: 0;
-  z-index: 999;
-  animation: slideDown 0.6s ease;
-  margin-bottom: 1rem;
-}
-
-.container-fluid {
+  z-index: 100;
+  height: 52px;
+  padding: 0 clamp(1rem, 3vw, 2rem);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-soft);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
   display: flex;
   align-items: center;
-  justify-content: flex-start;
 }
 
-.navbar-brands {
+.sn-navbar-inner {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
   display: flex;
   align-items: center;
-  font-size: 1.6rem;
-  font-weight: bold;
-  color: #05AFF2;
-  text-decoration: none;
+  gap: 0.75rem;
+}
+
+/* ── Brand ─────────────────────────────────────────────────────────────────── */
+.sn-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   cursor: pointer;
-  transition: color 0.3s ease;
+  user-select: none;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
-.btn {
-  margin-left: auto; /* extra spacing if needed */
+.sn-brand-logo {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px var(--emerald-glow));
 }
 
-.navbar-brands:hover {
-  color: #28C947;
-  text-shadow: 0 0 10px rgba(40, 201, 71, 0.5);
+.sn-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
-#logo_img {
-  height: 70px;
-  width: auto;
-  margin-right: 0.8rem;
-  /* filter: drop-shadow(0 0 5px rgba(5, 175, 242, 0.5)); */
-  /* transition: transform 0.3s ease; */
+.sn-brand-name em {
+  font-style: normal;
+  color: var(--emerald);
 }
 
-.navbar-brands:hover #logo_img {
-  transform: rotate(-5deg) scale(1.05);
+/* ── Divider ───────────────────────────────────────────────────────────────── */
+.sn-nav-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-soft);
+  flex-shrink: 0;
 }
 
-/* Responsive Navbar */
+/* ── Nav links ─────────────────────────────────────────────────────────────── */
+.sn-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.sn-nav-link {
+  display: inline-flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 0.7rem;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, background 0.15s;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.sn-nav-link:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.sn-nav-link.sn-active {
+  color: var(--emerald);
+  background: var(--emerald-dim);
+  font-weight: 600;
+}
+
+/* ── Right actions ─────────────────────────────────────────────────────────── */
+.sn-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: auto;
+}
+
+/* Theme toggle */
+.sn-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.sn-theme-toggle:hover {
+  border-color: rgba(0,210,150,0.4);
+  color: var(--emerald);
+  background: var(--emerald-dim);
+}
+
+/* Sign out button */
+.sn-signout {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 0.75rem;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.01em;
+}
+
+.sn-signout:hover {
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
 @media (max-width: 600px) {
-  .navbar-brands {
-    font-size: 1.2rem;
-  }
-
-  #logo_img {
-    height: 30px;
-  }
-
-  .navbar {
-    padding: 0.8rem 1rem;
-  }
-}
-
-/* Slide Down on Mount */
-@keyframes slideDown {
-  from {
-    transform: translateY(-30px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
-  }
+  .sn-brand-name { display: none; }
+  .sn-brand-logo { width: 24px; height: 24px; }
+  .sn-nav-link span { display: none; }
 }

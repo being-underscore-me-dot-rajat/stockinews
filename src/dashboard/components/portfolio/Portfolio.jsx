@@ -1,97 +1,82 @@
-import React, { useEffect, useState } from "react";
-import { Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  ArcElement,
-  Tooltip,
-  Legend
-} from "chart.js";
-import { useNavigate } from "react-router-dom";
-import './portfolio.css'; 
+import React, { useEffect, useState } from 'react';
+import { API_BASE } from '../../../lib/api';
+import Tip from '../../../lib/Tip';
+import { useNavigate } from 'react-router-dom';
+import './portfolio.css';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+const fmt = (n) =>
+  n == null ? '—' : '₹' + Math.abs(n).toLocaleString('en-IN', { maximumFractionDigits: 0 });
 
-export default function Portfolio({ user }) {
+export default function Portfolio() {
   const [portfolio, setPortfolio] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    const fetchPortfolio = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/portfolio", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await res.json();
-        if (res.ok) {
-          setPortfolio(data.portfolio);  // ✅ fix: access the actual array
-        }
-      } catch (error) {
-        console.error("Failed to fetch portfolio", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchPortfolio();
-  }, []);
-
-  const totalInvestment = portfolio.reduce(
-    (sum, stock) => sum + (stock.quantity || 0) * (stock.buy_price || 0),
-    0
-  );
-
-  const currentValue = portfolio.reduce(
-    (sum, stock) => sum + (stock.quantity || 0) * (stock.current_price || 0),
-    0
-  );
-
-  const percentChange = totalInvestment
-    ? ((currentValue - totalInvestment) / totalInvestment) * 100
-    : 0;
-
-
-  const pieData = {
-    labels: portfolio.map((stock) => stock.ticker),
-    datasets: [
-      {
-        label: "Investment Share",
-        data: portfolio.map((stock) => stock.quantity * stock.buy_price),
-        backgroundColor: ["#f87171", "#60a5fa", "#34d399", "#facc15", "#c084fc"],
-        borderWidth: 1,
-      },
-    ],
-  };
-
+  const [loading,   setLoading]   = useState(true);
+  const token    = localStorage.getItem('token');
   const navigate = useNavigate();
 
-  if (loading) {
-    return (
-        <div>
-            <div className="spinner" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    );}
+  useEffect(() => {
+    fetch(`${API_BASE}/api/portfolios`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => { if (d.portfolio) setPortfolio(d.portfolio); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [token]);
+
+  const invested = portfolio.reduce((s, x) => s + x.quantity * (x.avg_price || 0), 0);
+  const current  = portfolio.reduce((s, x) => s + x.quantity * (x.current_price || 0), 0);
+  const pnl      = current - invested;
+  const pnlPct   = invested ? (pnl / invested) * 100 : 0;
+  const isUp     = pnl >= 0;
 
   return (
-    <div className='panelStyle' onClick={() => navigate("/portfolio")} style={{ cursor: "pointer" }}>
-  <div className="panel-content">
-    <div className="portfolio-text">
-      <h2>Portfolio Overview</h2>
-      <p><strong>Total Investment:</strong> ₹{totalInvestment.toFixed(2)}</p>
-      <p><strong>Current Value:</strong> ₹{currentValue.toFixed(2)}</p>
-      <p>
-        <strong>Change:</strong> {percentChange.toFixed(2)}%
-        {percentChange >= 0 ? " 🔼" : " 🔽"}
-      </p>
+    <div
+      className="pb-card"
+      onClick={() => navigate('/portfolio')}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => e.key === 'Enter' && navigate('/portfolio')}
+    >
+      <div className="pb-accent" />
+      <div className="pb-inner">
+        <div className="pb-left">
+          <span className="pb-eyebrow">Portfolio Overview</span>
+          <span className="pb-hint">Click to view full portfolio →</span>
+        </div>
+
+        {loading ? (
+          <div className="pb-loading"><div className="spinner" style={{ margin: 0, width: 20, height: 20, borderWidth: 2 }} /></div>
+        ) : (
+          <div className="pb-stats">
+            <div className="pb-stat">
+              <span className="pb-stat-label">Invested <Tip text="Sum of quantity × avg buy price" /></span>
+              <span className="pb-stat-value">{fmt(invested)}</span>
+            </div>
+            <div className="pb-divider" />
+            <div className="pb-stat">
+              <span className="pb-stat-label">Current Value <Tip text="Sum of quantity × current market price" /></span>
+              <span className="pb-stat-value">{fmt(current)}</span>
+            </div>
+            <div className="pb-divider" />
+            <div className="pb-stat">
+              <span className="pb-stat-label">P&amp;L <Tip text="Unrealised profit/loss" /></span>
+              <span className={`pb-stat-value pb-stat-pnl ${isUp ? 'up' : 'down'}`}>
+                {isUp ? '+' : '−'}{fmt(Math.abs(pnl))}
+              </span>
+            </div>
+            <div className="pb-divider" />
+            <div className="pb-stat">
+              <span className="pb-stat-label">Return</span>
+              <span className={`pb-stat-value pb-stat-pnl ${isUp ? 'up' : 'down'}`}>
+                {isUp ? '+' : ''}{pnlPct.toFixed(2)}%
+              </span>
+            </div>
+            <div className="pb-divider" />
+            <div className="pb-stat">
+              <span className="pb-stat-label">Holdings</span>
+              <span className="pb-stat-value">{portfolio.length}</span>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-    <div className="chart-container">
-      <Pie data={pieData} />
-    </div>
-  </div>
-</div>
   );
 }

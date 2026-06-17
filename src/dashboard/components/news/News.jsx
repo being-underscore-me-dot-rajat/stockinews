@@ -1,65 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import './News.css';
+import { API_BASE } from '../../../lib/api';
+
+const fmt = (iso) => {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  } catch { return ''; }
+};
 
 export default function News() {
-  const [news, setNews] = useState([]);
-  const [Loading,setLoading]=useState(true);
+  const [news,    setNews]    = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/news");
-        const data = await res.json();
-        if (res.ok) {setNews(data.news || []);setLoading(false);}
-        else {console.error("Failed to load news");setLoading(false);}
-      } catch (err) {
-        console.error("News fetch error:", err);setLoading(false);
-      }
-    };
-
-    fetchNews();
+    fetch(`${API_BASE}/news`)
+      .then(r => r.json())
+      .then(d => { if (d.news) setNews(d.news); })
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  if (Loading) {
-    return (
-        <div>
-            <div className="spinner" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    );}
-
   return (
-    <div className="panelStyle scrollPanel">
-      <div className="sectionTitleStyle"><h2>News</h2></div>
-    {news.length === 0 ? (
-  <p>No news available.</p>
-) : (
-  <div className="scrollContent">
-  {news.map((article, idx) => (
-    
-    <article key={idx}>
-      <h3>
-        <a href={article.url} target="_blank" rel="noopener noreferrer">
-          {article.title}
-        </a>
-      </h3>
-      {article.source?.name && (
-        <span className="newsMeta">Source: {article.source.name}</span>
-      )}
-      {article.publishedAt && (
-        <span className="newsMeta">
-          • {new Date(article.publishedAt).toLocaleDateString(undefined, {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          })}
-        </span>
-      )}
-      <p>{article.description}</p>
-    </article>
-    
-  ))}</div>
-)}
- </div> );
+    <div className="db-panel">
+      <div className="db-panel-accent" />
+      <div className="db-panel-header">
+        <span className="db-panel-name">Market News</span>
+        {!loading && <span className="db-panel-badge">{news.length}</span>}
+      </div>
+
+      <div className="db-panel-body">
+        {loading ? (
+          <div style={{ display:'flex', justifyContent:'center', padding:'2.5rem' }}>
+            <div className="spinner" style={{ width:28, height:28, borderWidth:2, margin:0 }} />
+          </div>
+        ) : news.length === 0 ? (
+          <div className="nw-empty">No news available</div>
+        ) : (
+          news.map((article, i) => (
+            <div key={i} className="nw-item">
+              <a
+                href={article.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="nw-title"
+              >
+                {article.title}
+              </a>
+              <div className="nw-meta">
+                {article.source?.name && (
+                  <span className="nw-source">{article.source.name}</span>
+                )}
+                {article.publishedAt && (
+                  <span className="nw-date">{fmt(article.publishedAt)}</span>
+                )}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 }

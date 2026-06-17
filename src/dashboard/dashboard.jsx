@@ -1,71 +1,66 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Portfolio from './components/portfolio/portfolio';
+import { API_BASE } from '../lib/api';
+import Portfolio   from './components/portfolio/portfolio';
 import Marketwatch from './components/marketwatch/Marketwatch';
-import Watchlist from './components/watchlist/watchlist';
-import News from './components/news/news';
-import Navbar from '../home/navbar/Navbar';
+import Watchlist   from './components/watchlist/watchlist';
+import News        from './components/news/news';
+import Briefing    from './components/briefing/Briefing';
+import Navbar      from '../home/navbar/Navbar';
+import Footer      from '../home/navbar/footer/Footer';
 import './dashboard.css';
-import Footer from '../home/navbar/footer/Footer';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [msg, setMsg] = useState("Loading...");
+  const [user,    setUser]    = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    console.log(token)
-
-    if (!token) {
-      navigate("/"); // redirect if not logged in
-      return;
-    }
-
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/me", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          setUser(data.user);
-          setMsg(null);
-        } else {
-          setMsg("Unauthorized");
-          localStorage.removeItem("token");
-          navigate("/", { replace: true });
-        }
-      } catch (err) {
-        console.error(err);
-        setMsg("Error fetching user");
-        navigate("/");
-      }
-    };
-
-    fetchUser();
+    const token = localStorage.getItem('token');
+    if (!token) { navigate('/'); return; }
+    fetch(`${API_BASE}/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(r => r.json())
+      .then(d => {
+        if (d.user) { setUser(d.user); setLoading(false); }
+        else { localStorage.removeItem('token'); navigate('/', { replace: true }); }
+      })
+      .catch(() => navigate('/'));
   }, [navigate]);
 
-  if (msg === "Loading...") {
-  return <div className="loading-message" style={{ textAlign: "center", marginTop: "100px" }}>Loading Dashboard...</div>;
-}
-
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="db-loading">
+          <div className="spinner" />
+          <span>Loading dashboard…</span>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
-    <Navbar/>
-    <div className='dashboard-grid'>
-      <Portfolio user={user} />
-      <Marketwatch/>
-      <Watchlist/>
-      <News />
-    </div>
-    <Footer />
+      <Navbar />
+      <div className="db-wrap">
+
+        {/* Row 1 — Portfolio summary bar */}
+        <Portfolio user={user} />
+
+        {/* Row 2 — AI Briefing (left, wider) + Watchlist (right) */}
+        <div className="db-row db-row-mid">
+          <Briefing />
+          <Watchlist />
+        </div>
+
+        {/* Row 3 — Market Watch (left) + News (right) */}
+        <div className="db-row db-row-bottom">
+          <Marketwatch />
+          <News />
+        </div>
+
+      </div>
+      <Footer />
     </>
   );
 }
