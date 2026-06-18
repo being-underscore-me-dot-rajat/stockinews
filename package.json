@@ -9,6 +9,9 @@
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  "overrides": {
+    "rollup": "4.61.0"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.8",
     "axios": "^1.9.0",
